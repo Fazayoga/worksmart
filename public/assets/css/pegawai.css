@@ -1,0 +1,36 @@
+/* FILTER CARD */
+.pegawai-filter {
+    transition: all 0.25s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.pegawai-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.pegawai-filter.active {
+    background-color: #eef5ff !important;
+    border: 1px solid #cfe2ff;
+    transform: scale(1.02);
+    box-shadow: 0 10px 24px rgba(13, 110, 253, 0.2);
+}
+
+/* TABLE ROW ANIMATION */
+tbody tr {
+    transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
+    will-change: opacity, transform, filter;
+}
+
+tbody tr.fade-out {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+}
+
+tbody tr.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}

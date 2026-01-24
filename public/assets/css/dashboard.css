@@ -1,0 +1,200 @@
+/* =========================================================
+   KONFIGURASI UTAMA
+========================================================= */
+:root {
+    --sidebar-width: 250px;
+    --sidebar-collapsed-width: 80px;
+    --transition-speed: 0.3s;
+}
+
+/* =========================================================
+   LOGO & APP BRAND
+========================================================= */
+.sidebar-logo {
+    height: 25px;
+    transition: all var(--transition-speed) ease;
+}
+
+.app-brand-link {
+    display: flex;
+    align-items: center;
+    transition:
+        transform var(--transition-speed) ease,
+        justify-content var(--transition-speed) ease;
+}
+
+/* =========================================================
+   TOGGLE DESKTOP (SELALU TERLIHAT)
+========================================================= */
+#desktopMenuToggle {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+#desktopMenuToggle i {
+    transition: transform var(--transition-speed) ease;
+}
+
+#desktopMenuToggle i :hover {
+    transform: rotate(180deg);
+}
+
+/* =========================================================
+   LAYOUT PAGE (INTI RESPONSIVE)
+========================================================= */
+.layout-page {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    transition:
+        margin-left var(--transition-speed) ease,
+        width var(--transition-speed) ease;
+}
+
+/* Sidebar terbuka */
+body:not(.layout-menu-collapsed) .layout-page {
+    margin-left: 0px; /* lebar sidebar normal */
+    width: calc(100% - 250px);
+    transition: all 0.3s ease;
+}
+body:not(.layout-menu-collapsed) .layout-page .navbar {
+    margin-left: 25px; /* lebar sidebar normal */
+    width: calc(100% - 50px);
+    transition: all 0.3s ease;
+}
+
+/* Sidebar collapse */
+body.layout-menu-collapsed .layout-page {
+    margin-left: -175px; /* lebar sidebar collapse */
+    width: calc(100% - 80px + 175px);
+    transition: all 0.3s ease;
+}
+
+/* =========================================================
+   NAVBAR, CONTENT, FOOTER
+========================================================= */
+.layout-page .navbar,
+.layout-page .content-wrapper,
+.layout-page .content-footer {
+    width: 100%;
+    transition:
+        padding var(--transition-speed) ease,
+        width var(--transition-speed) ease;
+}
+
+/* =========================================================
+   SIDEBAR (DESKTOP)
+========================================================= */
+@media (min-width: 1200px) {
+    body.layout-menu-collapsed #layout-menu {
+        width: var(--sidebar-collapsed-width);
+    }
+
+    /* Hilangkan semua teks sidebar */
+    body.layout-menu-collapsed .dropdown,
+    body.layout-menu-collapsed .menu-text,
+    body.layout-menu-collapsed .menu-header-text,
+    body.layout-menu-collapsed .text-truncate,
+    body.layout-menu-collapsed .menu-sub {
+        display: none !important;
+    }
+
+    /* Logo tetap center */
+    body.layout-menu-collapsed .app-brand-link {
+        justify-content: center;
+        transform: translateX(-15px);
+    }
+
+    body.layout-menu-collapsed .sidebar-logo {
+        height: 28px;
+    }
+}
+
+/* =========================================================
+   DROPDOWN NOTIFIKASI (ANTI TERPOTONG)
+========================================================= */
+#layout-navbar,
+.navbar-nav-left,
+.navbar-nav-left .nav-item {
+    overflow: visible !important;
+}
+
+.navbar-nav-left .dropdown-menu {
+    position: absolute;
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+}
+
+/* =========================================================
+   MOBILE (AMAN – BIARKAN DEFAULT SNEAT)
+========================================================= */
+@media (max-width: 1199px) {
+    .layout-page {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+    /* Sidebar collapse */
+    body.layout-menu-collapsed .layout-page {
+        margin-left: 0px; /* lebar sidebar collapse */
+        width: calc(100% - 80px);
+        transition: all 0.3s ease;
+    }
+}
+/* Mode Sidebar ditutup */
+@media (max-width: 991px) {
+    .layout-page .navbar {
+        margin-left: 17px !important;
+    }
+    /* Ini untuk jika sidebar ditutup */
+    body.layout-menu-collapsed .layout-page .navbar {
+        margin-left: 17px; /* lebar sidebar collapse */
+        width: calc(100% - 80px);
+        transition: all 0.3s ease;
+    }
+}
+
+/* =========================================================
+   DEKSTOP NOTIFIKASI 
+========================================================= */
+
+.navbar-nav .dropend .dropdown-menu {
+    margin-left: -100px;
+    left: 100% !important;
+    right: auto !important;
+}
+
+/* Desktop & Tablet */
+@media (min-width: 992px) {
+    .navbar-nav .dropend .dropdown-menu {
+        margin-left: -50px;
+        left: 100% !important;
+        right: auto !important;
+        top: 0;
+    }
+}
+
+/* Mobile */
+
+@media (max-width: 991.98px) {
+    .navbar-nav .dropend .dropdown-menu {
+        left: 100% !important;
+        right: 0 !important;
+        margin-left: -85px;
+        margin-top: 10px;
+    }
+}
+
+/* =========================================================
+   DEKSTOP Calendar 
+========================================================= */
+/* ===== MINI CALENDAR MODERN ===== */
+.app-calendar-wrapper {
+    min-height: calc(100vh - 180px);
+}
+
+.app-calendar-content,
+#calendar {
+    height: 100%;
+}
