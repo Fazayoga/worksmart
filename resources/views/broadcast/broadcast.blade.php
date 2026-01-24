@@ -32,7 +32,7 @@
     </div>
     <div class="card">
         <div class="card-header border-bottom">
-            <div class="mb-2">
+            <div class="mb-0">
                 <a href="" class="btn btn-success">
                     <i class="bx bx-plus me-1"></i>
                     Kirim Broadcast
