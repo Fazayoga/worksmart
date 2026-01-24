@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Pinjaman Karyawan')
+@section('title', 'Data Pinjaman')
 
 @section('content')
 
@@ -26,7 +26,7 @@
                     <a href="{{ url('/dashboard') }}">Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Pinjaman Karyawan
+                    Management Pinjaman Karyawan / Kasbon
                 </li>
             </ol>
         </nav>
@@ -45,7 +45,7 @@
                     </div>
                     <div>
                         <small class="text-muted">Total Pinjaman</small>
-                        <h4 class="mb-0 fw-semibold">35</h4>
+                        <h4 class="mb-0 fw-semibold">Rp. 10.000.000</h4>
                         {{-- {{ $totalPinjaman }} --}}
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                     </div>
                     <div>
                         <small class="text-muted">Belum Lunas</small>
-                        <h4 class="mb-0 fw-semibold">20</h4>
+                        <h4 class="mb-0 fw-semibold">Rp. 6.000.000</h4>
                     </div>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                     </div>
                     <div>
                         <small class="text-muted">Sudah Lunas</small>
-                        <h4 class="mb-0 fw-semibold">15</h4>
+                        <h4 class="mb-0 fw-semibold">Rp. 4.000.000</h4>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                 <div class="col-12 col-lg-4">
                     <a href="#" class="btn btn-primary w-100 w-lg-auto">
                         <i class="bx bx-plus me-1"></i>
-                        Tambah Pinjaman
+                        Pinjaman
                     </a>
                 </div>
 
