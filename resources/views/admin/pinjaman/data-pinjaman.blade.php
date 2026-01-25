@@ -11,7 +11,7 @@
         <div class="d-flex align-items-center gap-3">
             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
                 style="width:48px;height:48px">
-                <i class="bx bx-wallet fs-4"></i>
+                <i class="bx bx-detail fs-4"></i>
             </div>
             <div>
                 <h5 class="mb-0">Management Pinjaman Karyawan / Kasbon</h5>

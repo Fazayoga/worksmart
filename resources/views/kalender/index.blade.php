@@ -194,3 +194,6 @@
     </div>
 
 @endsection
+@push('scripts')
+    <script src="{{ asset('js/calendar.js') }}"></script>
+@endpush

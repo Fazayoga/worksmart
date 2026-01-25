@@ -53,6 +53,7 @@
     <script src="{{ asset('assets/js/main.js') }}"></script>
     <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <!--Start of Tawk.to Script-->
@@ -70,70 +71,6 @@
         })();
     </script>
     <!--End of Tawk.to Script-->
-    <script>
-        /*
-                                                document.addEventListener('DOMContentLoaded', function () {
-                                                    document.querySelectorAll('.pegawai-filter').forEach(card => {
-                                                        card.addEventListener('click', function () {
-                                                            const status = this.dataset.status;
-
-                                                            fetch(`/pegawai?status=${status}`)
-                                                                .then(response => response.json())
-                                                                .then(data => {
-                                                                    renderPegawai(data);
-                                                                });
-                                                        });
-                                                    });
-                                                });
-
-                                                function renderPegawai(data) {
-                                                    const tbody = document.querySelector('tbody');
-                                                    tbody.innerHTML = '';
-
-                                                    if (data.length === 0) {
-                                                        tbody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center text-muted">
-                    Tidak ada data
-                </td>
-            </tr>
-        `;
-                                                        return;
-                                                    }
-
-                                                    data.forEach(row => {
-                                                        tbody.innerHTML += `
-            <tr>
-                <td>
-                    <div class="d-flex align-items-center gap-2">
-                        <img src="${row.avatar ?? '/assets/img/avatars/default.png'}"
-                             class="rounded-circle" width="32">
-                        <span>${row.nama}</span>
-                    </div>
-                </td>
-                <td>${row.email}</td>
-                <td>${row.jabatan}</td>
-                <td>
-                    <span class="badge bg-label-${row.status === 'aktif' ? 'success' : 'secondary'}">
-                        ${row.status}
-                    </span>
-                </td>
-                <td>${row.created_at}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-warning">
-                        <i class="bx bx-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger">
-                        <i class="bx bx-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-                                                    });
-                                                }
-                                                */
-    </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const filters = document.querySelectorAll('.pegawai-filter');
@@ -229,108 +166,7 @@
             });
         });
     </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let calendarEl = document.getElementById('calendar');
-
-            let calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                height: 'auto',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-                },
-                selectable: true,
-                editable: true,
-                navLinks: true,
-
-                events: [{
-                        title: 'Meeting Tim',
-                        start: '2026-01-10',
-                        classNames: [
-                            'bg-primary',
-                            'text-primary',
-                            'fw-semibold',
-                            'border',
-                            'border-primary',
-                            'px-2',
-                            'py-1',
-                            'rounded-2'
-                        ]
-                    },
-                    {
-                        title: 'Deadline Project',
-                        start: '2026-01-12',
-                        classNames: [
-                            'bg-danger',
-                            'text-primary',
-                            'fw-semibold',
-                            'border',
-                            'border-danger',
-                            'px-2',
-                            'py-1',
-                            'rounded-2'
-                        ]
-                    },
-                    {
-                        title: 'Review',
-                        start: '2026-01-15',
-                        end: '2026-01-16',
-                        classNames: [
-                            'bg-success',
-                            'text-primary',
-                            'fw-semibold',
-                            'border',
-                            'border-success',
-                            'px-2',
-                            'py-1',
-                            'rounded-2'
-                        ]
-                    }
-                ],
-
-                dateClick: function(info) {
-                    document.getElementById('eventStartDate').value = info.dateStr;
-                    let offcanvas = new bootstrap.Offcanvas(
-                        document.getElementById('addEventSidebar')
-                    );
-                    offcanvas.show();
-                }
-            });
-
-            calendar.render();
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const startPicker = flatpickr("#eventStartDate", {
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-                time_24hr: true
-            });
-
-            const endPicker = flatpickr("#eventEndDate", {
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-                time_24hr: true
-            });
-
-            flatpickr("#miniCalendar", {
-                inline: true,
-                mode: "range",
-                dateFormat: "Y-m-d",
-                onChange(selectedDates) {
-                    if (selectedDates.length === 2) {
-                        startPicker.setDate(selectedDates[0], true);
-                        endPicker.setDate(selectedDates[1], true);
-                    }
-                }
-            });
-
-        });
-    </script>
-
+    @stack('scripts')
 </body>
 
 </html>
