@@ -171,10 +171,10 @@
                             <input type="date" class="form-control">
                         </div>
 
-                        <button class="btn btn-warning w-75 w-sm-auto">
-                            <i class="bx bx-reset me-1"></i>
-                            <span class="d-none d-sm-inline">Reset Jatah Cuti</span>
-                            <span class="d-inline d-sm-none">Reset Jatah Cuti</span>
+                        <button
+                            class="btn btn-warning d-flex align-items-center justify-content-center gap-1 w-100 w-md-auto px-3">
+                            <i class="bx bx-reset"></i>
+                            <span>Reset Jatah Cuti</span>
                         </button>
 
                     </div>

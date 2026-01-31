@@ -3,54 +3,43 @@
 @section('title', 'Trekking Lokasi Pegawai')
 
 @section('content')
+    <div class="row align-items-start align-items-md-center mb-4 g-3">
 
-    <!-- HEADER -->
-    <div class="mb-4">
-        <h4 class="fw-bold mb-1">
-            <i class="bx bx-current-location me-1"></i>
-            Trekking Lokasi Pegawai Saat Perjalanan / Dinas / Wajib Standby Kantor
-            <span class="badge bg-label-warning ms-1">Beta</span>
-        </h4>
-        <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
-            <ol class="breadcrumb breadcrumb-style1 mb-0">
-                <li class="breadcrumb-item">
-                    <a href="#">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item active">
-                    Trekking Lokasi Pegawai
-                </li>
-            </ol>
-        </nav>
-    </div>
+        <!-- KIRI : ICON + TITLE -->
+        <div class="col-12 col-lg-8">
+            <div class="d-flex align-items-start gap-3">
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0"
+                    style="width:48px;height:48px">
+                    <i class="bx bx-current-location fs-4"></i>
+                </div>
 
-        <!-- KIRI : Logo + Title -->
-        <div class="d-flex align-items-center gap-3">
-            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                style="width:48px;height:48px">
-                <i class="bx bx-current-location fs-4"></i>
-            </div>
-            <div>
-                <h5 class="mb-0">
-                    Trekking Lokasi Pegawai Saat Perjalanan / Dinas / Wajib Standby Kantor
-                    <span class="badge bg-label-warning ms-1">Beta</span>
-                </h5>
-                <small class="text-muted">Kelola lokasi pegawai saat perjalanan dinas</small>
+                <div>
+                    <h5 class="mb-1 lh-sm">
+                        Trekking Lokasi Pegawai Saat Perjalanan / Dinas / Wajib Standby Kantor
+                        <span class="badge bg-label-warning align-middle ms-1">Beta</span>
+                    </h5>
+                    <small class="text-muted d-block">
+                        Kelola lokasi pegawai saat perjalanan dinas
+                    </small>
+                </div>
+
             </div>
         </div>
 
-        <!-- KANAN : Breadcrumb -->
-        <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ url('/dashboard') }}">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Manajemen Tugas
-                </li>
-            </ol>
-        </nav>
+        <!-- KANAN : BREADCRUMB -->
+        <div class="col-12 col-lg-4 text-lg-end">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 justify-content-lg-end" style="--bs-breadcrumb-divider: '>';">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url('/dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Trekking Lokasi Pegawai
+                    </li>
+                </ol>
+            </nav>
+        </div>
 
     </div>
 

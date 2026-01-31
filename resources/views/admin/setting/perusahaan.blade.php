@@ -77,8 +77,8 @@
                     <div class="col-md-12">
                         <label class="form-label">Alamat Perusahaan</label>
                         <textarea class="form-control" rows="2">
-Jl. Paluransih No 152B Sinduharjo Ngaglik Sleman Yogyakarta
-                    </textarea>
+                            Jl. Paluransih No 152B Sinduharjo Ngaglik Sleman Yogyakarta
+                        </textarea>
                     </div>
                 </div>
 
@@ -87,18 +87,18 @@ Jl. Paluransih No 152B Sinduharjo Ngaglik Sleman Yogyakarta
                 {{-- KONTAK --}}
                 <h6 class="fw-semibold mb-3">Kontak & Informasi Tambahan</h6>
 
-                <div class="row g-3">
-                    <div class="col-md-4">
+                <div class="row g-2">
+                    <div class="col-md-6">
                         <label class="form-label">Telepon Perusahaan</label>
                         <input type="text" class="form-control" value="0818808">
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">No. HP / WhatsApp</label>
                         <input type="text" class="form-control" value="0818808">
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Bidang Industri</label>
                         <input type="text" class="form-control" value="Sekolah Kemashalatan Umat">
                     </div>
@@ -108,12 +108,23 @@ Jl. Paluransih No 152B Sinduharjo Ngaglik Sleman Yogyakarta
                         <input type="text" class="form-control" value="www.tadikamesra.co.id">
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label class="form-label">Logo / Kartu Perusahaan</label>
-                        <input type="file" class="form-control">
-                        <small class="text-muted">
-                            PNG / JPG, maksimal 2MB
-                        </small>
+
+                        <div class="d-flex align-items-center gap-3">
+                            <!-- PREVIEW (AWALNYA DISEMBUNYIKAN) -->
+                            <img id="previewLogo" class="border rounded d-none"
+                                style="width:90px;height:90px;object-fit:contain" alt="Preview Logo">
+
+                            <!-- FILE INPUT -->
+                            <div class="flex-grow-1">
+                                <input type="file" class="form-control" accept="image/png, image/jpeg"
+                                    onchange="previewImage(this)">
+                                <small class="text-muted">
+                                    PNG / JPG, maksimal 2MB
+                                </small>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -136,3 +147,19 @@ Jl. Paluransih No 152B Sinduharjo Ngaglik Sleman Yogyakarta
     </form>
 
 @endsection
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('previewLogo');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none'); // tampilkan gambar
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

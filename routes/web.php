@@ -134,6 +134,10 @@ Route::get('Potongan-Tunjangan', function () {
     return view('admin.setting.potongan-tunjangan');
 })->name('Potongan-Tunjangan');
 
+Route::get('Divisi-Departemen', function () {
+    return view('admin.setting.divisi-departemen');
+})->name('Divisi-Departemen');
+
 Route::get('Riwayat-Login', function () {
     return view('admin.riwayat-login');
 })->name('Riwayat-Login');

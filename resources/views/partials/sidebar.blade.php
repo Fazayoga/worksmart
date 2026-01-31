@@ -268,6 +268,7 @@
                 'Perusahaan',
                 'Potongan-Tunjangan',
                 'Riwayat-Login',
+                'Divisi-Departemen',
             )
                 ? 'active open'
                 : '' }}">
@@ -304,6 +305,12 @@
                     <a href="{{ route('Potongan-Tunjangan') }}" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
                         <div class="text-truncate">Potongan & Tunjangan</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ request()->routeIs('Divisi-Departemen') ? 'active' : '' }}">
+                    <a href="{{ route('Divisi-Departemen') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-buildings"></i>
+                        <div class="text-truncate">Divisi / Departemen</div>
                     </a>
                 </li>
             </ul>

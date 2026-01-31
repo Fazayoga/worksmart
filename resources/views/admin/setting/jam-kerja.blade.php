@@ -30,26 +30,25 @@
                 </li>
             </ol>
         </nav>
-
     </div>
+    {{-- TABLE --}}
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs border-bottom">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">
+                        <i class="bx bx-time me-1"></i> Jadwal Kerja
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bx bx-calendar-event me-1"></i> Kegiatan
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-    {{-- TABS --}}
-    <ul class="nav nav-tabs mb-3">
-        <li class="nav-item">
-            <a class="nav-link active" href="#">
-                <i class="bx bx-time"></i> Jadwal Kerja
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bx bx-calendar-event"></i> Kegiatan
-            </a>
-        </li>
-    </ul>
-
-    {{-- TOGGLE KALENDER NASIONAL --}}
-    <div class="card mb-3">
-        <div class="card-body py-2">
+        <div class="card-header">
             <div class="d-flex align-items-center gap-3">
                 <div class="form-check form-switch mb-2">
                     <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked />
@@ -63,10 +62,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    {{-- TABLE --}}
-    <div class="card shadow-sm">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light text-center">
@@ -81,7 +76,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     <tr>
                         <td class="fw-semibold">Shift Pagi</td>
                         <td class="text-center">08:00</td>
@@ -98,9 +92,6 @@
                             </button>
                         </td>
                     </tr>
-
-
-
                 </tbody>
             </table>
         </div>

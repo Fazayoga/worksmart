@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Jabatan & Akses Modul')
+@section('title', 'Divisi')
 
 @section('content')
     {{-- HEADER --}}
@@ -9,11 +9,11 @@
         <div class="d-flex align-items-center gap-3">
             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
                 style="width:48px;height:48px">
-                <i class='bx bx-user-check fs-4'></i>
+                <i class='bx bx-buildings fs-4'></i>
             </div>
             <div>
-                <h5 class="mb-0">Manajemen Jabatan dan Akses Modul</h5>
-                <small class="text-muted">Manajemen Jabatan & Akses</small>
+                <h5 class="mb-0">Management Divisi</h5>
+                <small class="text-muted">Manajemen Divisi</small>
             </div>
         </div>
         {{-- KANAN : BREADCRUMB --}}
@@ -23,7 +23,7 @@
                     <a href="{{ url('/dashboard') }}">Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Manajemen Jabatan dan Akses Modul
+                    Management Divisi
                 </li>
             </ol>
         </nav>
@@ -35,40 +35,33 @@
                 <div class="d-flex flex-column flex-md-row gap-2 left-content-lg-end">
                     <!-- Pilih Filter -->
                     <button class="btn btn-primary">
-                        <i class="bx bx-plus"></i> Tambah
+                        <i class="bx bx-plus"></i> Divisi
                     </button>
                 </div>
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-bordered align-middle">
+            <table class="table">
                 <thead class="table-light text-center">
                     <tr>
-                        <th style="width: 20%">Nama Jabatan</th>
-                        <th>Akses Modul</th>
-                        <th style="width: 5%">Aksi</th>
+                        <th style="width: 35%">Nama Jabatan</th>
+                        <th style="width: 35%">Akses Modul</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{-- ROW --}}
                     <tr>
                         <td>
-                            <input type="text" class="form-control form-control-sm" value="Administrator">
+                            Administrasi
                         </td>
                         <td>
-                            <div class="d-flex flex-wrap gap-1">
-                                <span class="badge bg-secondary">Aplikasi Mobile</span>
-                                <span class="badge bg-secondary">Manajemen Pegawai</span>
-                                <span class="badge bg-secondary">Manajemen Ijin / Cuti</span>
-                                <span class="badge bg-secondary">Manajemen Slip Gaji</span>
-                                <span class="badge bg-secondary">Manajemen Absensi</span>
-                                <span class="badge bg-secondary">Manajemen Laporan</span>
-                                <span class="badge bg-secondary">Manajemen Setting</span>
-                                <span class="badge bg-secondary">Manajemen Billing</span>
-                                <span class="badge bg-secondary">Plugin BPJS</span>
-                            </div>
+                            Bidang Administrasi
                         </td>
                         <td class="text-center">
+                            <button class="btn btn-sm btn-warning">
+                                <i class="bx bx-pencil"></i>
+                            </button>
                             <button class="btn btn-sm btn-danger">
                                 <i class="bx bx-trash"></i>
                             </button>
@@ -76,15 +69,15 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" class="form-control form-control-sm" value="Manager">
+                            Keuangan
                         </td>
                         <td>
-                            <div class="d-flex flex-wrap gap-1">
-                                <span class="badge bg-secondary">Aplikasi Mobile</span>
-                                <span class="badge bg-secondary">Plugin Template Kartu</span>
-                            </div>
+                            Bidang Keuangan
                         </td>
                         <td class="text-center">
+                            <button class="btn btn-sm btn-warning">
+                                <i class="bx bx-pencil"></i>
+                            </button>
                             <button class="btn btn-sm btn-danger">
                                 <i class="bx bx-trash"></i>
                             </button>
@@ -92,15 +85,15 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" class="form-control form-control-sm" value="Staff">
+                            Teknisi
                         </td>
                         <td>
-                            <div class="d-flex flex-wrap gap-1">
-                                <span class="badge bg-secondary">Aplikasi Mobile</span>
-                                <span class="badge bg-secondary">Manajemen Absensi</span>
-                            </div>
+                            Bidang Teknisi
                         </td>
                         <td class="text-center">
+                            <button class="btn btn-sm btn-warning">
+                                <i class="bx bx-pencil"></i>
+                            </button>
                             <button class="btn btn-sm btn-danger">
                                 <i class="bx bx-trash"></i>
                             </button>
@@ -108,16 +101,6 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
-        <div class="card-footer bg-light border-top">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
-                <button class="btn btn-success px-4">
-                    <i class="bx bx-save me-1"></i> Simpan Perubahan
-                </button>
-                <small class="text-muted">
-                    * Modul merupakan hak akses halaman admin
-                </small>
-            </div>
         </div>
     </div>
 @endsection
