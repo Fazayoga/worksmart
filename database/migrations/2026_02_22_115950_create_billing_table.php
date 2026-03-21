@@ -17,11 +17,18 @@ return new class extends Migration
                 ->constrained('perusahaan')
                 ->cascadeOnDelete();
 
-            $table->foreignId('paket_id')->constrained('paket_langganan')->cascadeOnDelete();
+            $table->string('nomor_transaksi')->unique();
+            $table->foreignId('paket_id')->nullable()->constrained('paket_langganan')->cascadeOnDelete();
+            $table->string('tipe');
+            $table->decimal('nominal', 15, 2);
+            $table->text('keterangan')->nullable();
+            $table->decimal('nominal_total', 15, 2);
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
+            $table->datetime('tanggal_bayar')->nullable();
             $table->enum('status',['active','expired'])->default('active');
             $table->enum('payment_status',['paid','unpaid'])->default('unpaid');
+            $table->string('file_invoice')->nullable();
             $table->timestamps();
         });
     }
