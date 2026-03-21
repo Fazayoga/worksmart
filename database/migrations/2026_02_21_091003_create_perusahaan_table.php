@@ -25,6 +25,9 @@ return new class extends Migration
                 ->default('active')
                 ->index();
 
+            $table->date('trial_ends_at')->nullable();
+            $table->enum('subscription_status', ['trial', 'active', 'expired'])->default('trial');
+
             $table->timestamps();
 
             // Optional untuk SaaS

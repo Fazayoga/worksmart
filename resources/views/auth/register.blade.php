@@ -11,138 +11,140 @@
     <title>Register | WorkSmart</title>
 
     <meta name="description" content="" />
-
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('/assets/img/favicon/logo.ico') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
 
-    <link rel="stylesheet" href="../assets/vendor/fonts/iconify-icons.css" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/iconify-icons.css') }}" />
 
     <!-- Core CSS -->
-    <!-- build:css assets/vendor/css/theme.css  -->
-
-    <link rel="stylesheet" href="../assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="../assets/css/demo.css" />
-
-    <!-- Vendors CSS -->
-
-    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-
-    <!-- endbuild -->
-
-    <!-- Page CSS -->
-    <!-- Page -->
-    <link rel="stylesheet" href="../assets/vendor/css/pages/page-auth.css" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}" />
 
     <!-- Helpers -->
-    <script src="../assets/vendor/js/helpers.js"></script>
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-
-    <script src="../assets/js/config.js"></script>
+    <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
+    <script src="{{ asset('assets/js/config.js') }}"></script>
 </head>
 
-<body>
-    <!-- Content -->
+<body class="auth-page">
+    <div class="auth-card">
+        <!-- Logo -->
+        <div class="auth-logo">
+            <div class="d-flex align-items-center gap-2 text-decoration-none">
+                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="WorkSmart">
+                <span class="h4 mb-0 fw-bold text-dark">WorkSmart</span>
+            </div>
+        </div>
+        <!-- /Logo -->
 
-    <div class="container-xxl">
-        <div class="authentication-wrapper authentication-basic container-p-y">
-            <div class="authentication-inner">
-                <!-- Register Card -->
-                <div class="card px-sm-6 px-0">
-                    <div class="card-body">
-                        <!-- Logo -->
-                        <div class="app-brand justify-content-center">
-                            <a href="index.html" class="app-brand-link gap-2">
-                                <img src="{{ asset('assets/img/logo/logo.png') }}" alt="WorkSmart"
-                                    style="height: 25px;">
-                                <span class="app-brand-text demo text-heading fw-bold">WorkSmart</span>
-                            </a>
-                        </div>
-                        <!-- /Logo -->
-                        <h4 class="mb-1 text-center">Daftar sekarang, Gratis 15 hari fitur lengkap 🚀</h4>
-                        <p class="mb-6 text-center">Pendaftaran hanya dilakukan oleh owner / HRD / administrator
+        <h1 class="auth-title">Daftar sekarang! 🚀</h1>
+        <p class="auth-subtitle">Gratis 15 hari fitur lengkap. Pendaftaran hanya dilakukan oleh owner / HRD /
+            administrator</p>
 
-                        </p>
+        <form id="formAuthentication" action="{{ route('register') }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <label for="company_name" class="form-label">Nama Perusahaan</label>
+                <input type="text" class="form-control" id="company_name" name="company_name"
+                    placeholder="Masukkan nama perusahaan" autofocus />
+            </div>
+            <div class="mb-3">
+                <label for="full_name" class="form-label">Nama</label>
+                <input type="text" class="form-control" id="full_name" name="full_name"
+                    placeholder="Masukkan nama lengkap" />
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">E-Mail</label>
+                <input type="email" class="form-control" id="email" name="email"
+                    placeholder="Masukkan alamat email" />
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <label for="phone" class="form-label">No Telp</label>
+                    <input type="text" class="form-control" id="phone" name="phone"
+                        placeholder="No. Telepon" />
+                </div>
+                <div class="col-md-6">
+                    <label for="mobile" class="form-label">No Hp/Wa</label>
+                    <input type="text" class="form-control" id="mobile" name="mobile"
+                        placeholder="No. HP atau WhatsApp" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="city" class="form-label">Kota</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="Masukkan kota" />
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-group input-group-merge">
+                        <input type="password" id="password" class="form-control" name="password"
+                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
 
-                        <form id="formAuthentication" class="mb-6" action="index.html">
-                            <div class="mb-6">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username"
-                                    placeholder="Enter your username" autofocus />
-                            </div>
-                            <div class="mb-6">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="text" class="form-control" id="email" name="email"
-                                    placeholder="Enter your email" />
-                            </div>
-                            <div class="form-password-toggle">
-                                <label class="form-label" for="password">Password</label>
-                                <div class="input-group input-group-merge">
-                                    <input type="password" id="password" class="form-control" name="password"
-                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                        aria-describedby="password" />
-                                    <span class="input-group-text cursor-pointer"><i
-                                            class="icon-base bx bx-hide"></i></span>
-                                </div>
-                            </div>
-                            <div class="my-7">
-                                <div class="form-check mb-0">
-                                    <input class="form-check-input" type="checkbox" id="terms-conditions"
-                                        name="terms" />
-                                    <label class="form-check-label" for="terms-conditions">
-                                        I agree to
-                                        <a href="javascript:void(0);">privacy policy & terms</a>
-                                    </label>
-                                </div>
-                            </div>
-                            <button class="btn btn-primary d-grid w-100">Sign up</button>
-                        </form>
-
-                        <p class="text-center">
-                            <span>Already have an account?</span>
-                            <a href="{{ url('login') }}">
-                                <span>Sign in instead</span>
-                            </a>
-                        </p>
+                        <span class="input-group-text toggle-password" data-target="password" style="cursor:pointer;">
+                            <i class="icon-base bx bx-hide"></i>
+                        </span>
                     </div>
                 </div>
-                <!-- Register Card -->
+                <div class="col-md-6">
+                    <label class="form-label" for="password_confirmation">Ulang Password</label>
+                    <div class="input-group input-group-merge">
+                        <input type="password" id="password_confirmation" class="form-control"
+                            name="password_confirmation" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+
+                        <span class="input-group-text toggle-password" data-target="password_confirmation"
+                            style="cursor:pointer;">
+                            <i class="icon-base bx bx-hide"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
+
+            <button class="btn btn-auth" type="submit">Daftar Sekarang</button>
+        </form>
+
+        <div class="auth-footer">
+            <span>Already have an account?</span>
+            <a href="{{ url('login') }}" class="auth-link">
+                Sign in instead
+            </a>
         </div>
     </div>
 
     <!-- / Content -->
     <!-- Core JS -->
+    <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+    <script>
+        document.querySelectorAll(".toggle-password").forEach(function(button) {
 
-    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+            button.addEventListener("click", function() {
 
-    <script src="../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../assets/vendor/js/bootstrap.js"></script>
+                const target = document.getElementById(this.getAttribute("data-target"));
+                const icon = this.querySelector("i");
 
-    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+                if (target.type === "password") {
+                    target.type = "text";
+                    icon.classList.remove("bx-hide");
+                    icon.classList.add("bx-show");
+                } else {
+                    target.type = "password";
+                    icon.classList.remove("bx-show");
+                    icon.classList.add("bx-hide");
+                }
 
-    <script src="../assets/vendor/js/menu.js"></script>
+            });
 
-    <!-- endbuild -->
-
-    <!-- Vendors JS -->
-
-    <!-- Main JS -->
-
-    <script src="../assets/js/main.js"></script>
-
-    <!-- Page JS -->
-
-    <!-- Place this tag before closing body tag for github widget button. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+        });
+    </script>
 </body>
 
 </html>

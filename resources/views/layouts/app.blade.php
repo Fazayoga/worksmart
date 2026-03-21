@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
     @stack('styles')
@@ -156,13 +157,18 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const toggle = document.getElementById("desktopMenuToggle");
-            const icon = toggle.querySelector("i");
+            if (toggle) {
+                toggle.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    document.documentElement.classList.toggle('layout-menu-collapsed');
+                });
+            }
 
-            toggle.addEventListener("click", function() {
-                document.body.classList.toggle("layout-menu-collapsed");
-
-                icon.classList.toggle("bx-chevron-left");
-                icon.classList.toggle("bx-chevron-right");
+            // Sync sidebar state strictly for desktop; prevent bugs when shrunk to mobile
+            window.addEventListener('resize', function() {
+                if (window.innerWidth < 1200) {
+                    document.documentElement.classList.remove('layout-menu-collapsed');
+                }
             });
         });
     </script>

@@ -30,6 +30,41 @@ return new class extends Migration
 
             $table->boolean('is_active')->default(true)->index();
 
+            // Personal Details
+            $table->string('no_ktp', 20)->nullable();
+            $table->string('no_kk', 20)->nullable();
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('alamat_tinggal_provinsi')->nullable();
+            $table->string('alamat_tinggal_kabupaten')->nullable();
+            $table->string('alamat_tinggal_kecamatan')->nullable();
+            $table->text('alamat_tinggal_lengkap')->nullable();
+            $table->string('alamat_ktp_provinsi')->nullable();
+            $table->string('alamat_ktp_kabupaten')->nullable();
+            $table->string('alamat_ktp_kecamatan')->nullable();
+            $table->text('alamat_ktp_lengkap')->nullable();
+            $table->string('no_hp_1', 20)->nullable();
+            $table->string('no_hp_2', 20)->nullable();
+            $table->enum('jenis_kelamin', ['Laki-Laki', 'Perempuan'])->nullable();
+            $table->enum('status_pernikahan', ['Lajang', 'Nikah', 'Janda', 'Duda'])->nullable();
+            $table->enum('agama', ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Budha'])->nullable();
+            $table->enum('golongan_darah', ['O', 'A', 'B', 'AB'])->nullable();
+            $table->integer('tinggi_badan')->nullable();
+            $table->integer('berat_badan')->nullable();
+            $table->string('nama_ayah')->nullable();
+            $table->string('nama_ibu')->nullable();
+            $table->integer('jumlah_saudara')->nullable();
+            $table->string('kontak_darurat_nama')->nullable();
+            $table->string('kontak_darurat_hp', 20)->nullable();
+            $table->string('kontak_darurat_status')->nullable();
+
+            // Social Media links
+            $table->string('link_facebook')->nullable();
+            $table->string('link_twitter')->nullable();
+            $table->string('link_instagram')->nullable();
+            $table->string('link_linkedin')->nullable();
+            $table->string('link_website')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
 

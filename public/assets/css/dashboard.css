@@ -16,6 +16,7 @@
 }
 
 .app-brand-link {
+    margin-left: -10px;
     display: flex;
     align-items: center;
     transition:
@@ -36,7 +37,7 @@
     transition: transform var(--transition-speed) ease;
 }
 
-#desktopMenuToggle i :hover {
+html.layout-menu-collapsed #desktopMenuToggle i {
     transform: rotate(180deg);
 }
 
@@ -44,31 +45,16 @@
    LAYOUT PAGE (INTI RESPONSIVE)
 ========================================================= */
 .layout-page {
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
     min-height: 100vh;
-    transition:
-        margin-left var(--transition-speed) ease,
-        width var(--transition-speed) ease;
+    transition: all var(--transition-speed) ease;
 }
 
-/* Sidebar terbuka */
-body:not(.layout-menu-collapsed) .layout-page {
-    margin-left: 0px; /* lebar sidebar normal */
-    width: calc(100% - 250px);
-    transition: all 0.3s ease;
-}
-body:not(.layout-menu-collapsed) .layout-page .navbar {
-    margin-left: 25px; /* lebar sidebar normal */
-    width: calc(100% - 50px);
-    transition: all 0.3s ease;
-}
-
-/* Sidebar collapse */
-body.layout-menu-collapsed .layout-page {
-    margin-left: -175px; /* lebar sidebar collapse */
-    width: calc(100% - 80px + 175px);
-    transition: all 0.3s ease;
+/* Desktop layout styles */
+@media (min-width: 1200px) {
+    html:not(.layout-menu-collapsed) .layout-page .navbar {
+        margin-left: 25px;
+        width: calc(100% - 50px);
+    }
 }
 
 /* =========================================================
@@ -87,71 +73,45 @@ body.layout-menu-collapsed .layout-page {
    SIDEBAR (DESKTOP)
 ========================================================= */
 @media (min-width: 1200px) {
-    body.layout-menu-collapsed #layout-menu {
+    html.layout-menu-collapsed #layout-menu {
         width: var(--sidebar-collapsed-width);
     }
 
-    /* Hilangkan semua teks sidebar */
-    body.layout-menu-collapsed .dropdown,
-    body.layout-menu-collapsed .menu-text,
-    body.layout-menu-collapsed .menu-header-text,
-    body.layout-menu-collapsed .text-truncate,
-    body.layout-menu-collapsed .menu-sub {
+    /* Hilangkan semua teks sidebar & dropdown plugin */
+    html.layout-menu-collapsed .menu-text,
+    html.layout-menu-collapsed .menu-header-text,
+    html.layout-menu-collapsed .text-truncate,
+    html.layout-menu-collapsed .menu-sub,
+    html.layout-menu-collapsed .plugin-dropdown-container {
         display: none !important;
     }
 
-    /* Logo tetap center */
-    body.layout-menu-collapsed .app-brand-link {
-        justify-content: center;
-        transform: translateX(-15px);
+    html.layout-menu-collapsed .app-brand {
+        justify-content: center !important;
     }
 
-    body.layout-menu-collapsed .sidebar-logo {
-        height: 28px;
+    html.layout-menu-collapsed .app-brand-link {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
-}
-
-/* =========================================================
-   DROPDOWN NOTIFIKASI (ANTI TERPOTONG)
-========================================================= */
-#layout-navbar,
-.navbar-nav-left,
-.navbar-nav-left .nav-item {
-    overflow: visible !important;
-}
-
-.navbar-nav-left .dropdown-menu {
-    position: absolute;
-    right: 0 !important;
-    left: auto !important;
-    transform: none !important;
 }
 
 /* =========================================================
    MOBILE (AMAN – BIARKAN DEFAULT SNEAT)
 ========================================================= */
 @media (max-width: 1199px) {
-    .layout-page {
-        margin-left: 0 !important;
-        width: 100%;
-    }
-    /* Sidebar collapse */
-    body.layout-menu-collapsed .layout-page {
-        margin-left: 0px; /* lebar sidebar collapse */
-        width: calc(100% - 80px);
-        transition: all 0.3s ease;
+    .navbar {
+        margin-left: 25px !important;
+        margin-right: 25px !important;
+        width: calc(100% - 50px) !important;
     }
 }
+
 /* Mode Sidebar ditutup */
 @media (max-width: 991px) {
     .layout-page .navbar {
-        margin-left: 17px !important;
-    }
-    /* Ini untuk jika sidebar ditutup */
-    body.layout-menu-collapsed .layout-page .navbar {
-        margin-left: 17px; /* lebar sidebar collapse */
-        width: calc(100% - 80px);
-        transition: all 0.3s ease;
+        margin-left: 15px !important;
+        width: 100% !important;
     }
 }
 

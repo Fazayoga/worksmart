@@ -9,7 +9,8 @@
                 <div class="d-flex align-items-start row">
                     <div class="col-sm-7">
                         <div class="card-body">
-                            <h5 class="card-title text-primary mb-3">Congratulations John! 🎉</h5>
+                            <h5 class="card-title text-primary mb-3">Congratulations
+                                {{ explode(' ', Auth::user()->name)[0] }}! 🎉</h5>
                             <p class="mb-6">
                                 You have done 72% more sales today.<br />Check your new badge in
                                 your profile.

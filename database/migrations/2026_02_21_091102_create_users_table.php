@@ -33,6 +33,7 @@ return new class extends Migration
                 ->index();
 
             $table->timestamp('last_login')->nullable()->index();
+            $table->string('avatar')->nullable();
 
             $table->rememberToken();
             $table->timestamps();

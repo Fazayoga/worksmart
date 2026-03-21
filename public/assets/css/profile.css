@@ -1,0 +1,98 @@
+:root {
+    --profile-primary: #56ca00; /* Green from sidebar */
+    --profile-chart-blue: #007bff;
+    --profile-chart-yellow: #ffc107;
+    --profile-secondary: #8a8d93;
+    --profile-bg: #f4f5fa;
+    --card-shadow: 0 2px 10px 0 rgba(58, 53, 65, 0.1);
+}
+
+body {
+    background-color: var(--profile-bg);
+}
+
+.card {
+    border: none;
+    box-shadow: var(--card-shadow);
+    border-radius: 6px;
+}
+
+.profile-card {
+    padding-top: 20px;
+}
+
+.avatar-initial {
+    background-color: #f0f0f0 !important;
+    color: #555 !important;
+}
+
+.social-icon {
+    width: 38px;
+    height: 38px;
+    background: transparent;
+    border: none;
+    color: #696cff; /* Standard bluish icon color or green? Image shows blue/purple icons */
+}
+
+.social-icon:hover {
+    background-color: rgba(105, 108, 255, 0.08);
+}
+
+/* Tabs Styling */
+.profile-nav-tabs {
+    border-bottom: 1px solid #ebedf2;
+    background: transparent;
+}
+
+.profile-nav-tabs .nav-link {
+    border: none;
+    color: #6d6f74;
+    font-weight: 400;
+    padding: 10px 15px;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    font-size: 0.9375rem;
+}
+
+.profile-nav-tabs .nav-link i {
+    font-size: 1.25rem;
+    margin-right: 8px;
+}
+
+.profile-nav-tabs .nav-link:hover {
+    color: var(--profile-primary);
+}
+
+.profile-nav-tabs .nav-link.text-danger:hover {
+    color: #ff4d49 !important;
+}
+
+.profile-nav-tabs .nav-link.text-danger.active {
+    color: #ff4d49 !important;
+    border-bottom: 2px solid #ff4d49 !important;
+}
+
+.profile-tab-content {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 20px 0;
+}
+
+.tab-pane-card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 6px;
+    box-shadow: var(--card-shadow);
+}
+
+/* Timeline */
+.timeline-point-primary { background-color: var(--profile-chart-blue); }
+.timeline-point-success { background-color: var(--profile-primary); }
+
+/* Photo Grid Shadow */
+.img-fluid.shadow-sm:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
