@@ -16,18 +16,19 @@ class PegawaiController extends Controller
     public function index()
     {
         $perusahaan_id = Auth::user()->perusahaan_id;
-        
+
         $pegawai = Karyawan::with(['user', 'divisi', 'jabatan'])
             ->where('perusahaan_id', $perusahaan_id)
             ->get();
-        
+
         $divisi = Divisi::where('perusahaan_id', $perusahaan_id)->get();
         $jabatan = Jabatan::where('perusahaan_id', $perusahaan_id)->get();
-        
+        $shift = \App\Models\Shift::where('perusahaan_id', $perusahaan_id)->where('is_active', true)->get();
+
         $pegawaiAktif = Karyawan::where('perusahaan_id', $perusahaan_id)->where('is_active', true)->count();
         $pegawaiNonaktif = Karyawan::where('perusahaan_id', $perusahaan_id)->where('is_active', false)->count();
 
-        return view('admin.pegawai.index', compact('pegawai', 'pegawaiAktif', 'pegawaiNonaktif', 'divisi', 'jabatan'));
+        return view('admin.pegawai.index', compact('pegawai', 'pegawaiAktif', 'pegawaiNonaktif', 'divisi', 'jabatan', 'shift'));
     }
 
     public function store(Request $request)
@@ -37,9 +38,15 @@ class PegawaiController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'nik' => 'required|string|max:50',
+            'no_hp_aktif' => 'nullable|string|max:20',
             'divisi_id' => 'required|exists:divisi,id',
             'jabatan_id' => 'required|exists:jabatan,id',
+            'shift_id' => 'nullable|exists:shift,id',
+            'gaji_pokok' => 'nullable|numeric',
+            'jatah_cuti' => 'nullable|integer',
             'tanggal_masuk' => 'required|date',
+            'tanggal_berakhir_kontrak' => 'nullable|date',
+            'status_karyawan' => 'required|in:tetap,kontrak,magang',
         ]);
 
         try {
@@ -58,9 +65,14 @@ class PegawaiController extends Controller
                 'user_id' => $user->id,
                 'divisi_id' => $request->divisi_id,
                 'jabatan_id' => $request->jabatan_id,
+                'shift_id' => $request->shift_id,
                 'nik' => $request->nik,
+                'no_hp_1' => $request->no_hp_aktif,
                 'tanggal_masuk' => $request->tanggal_masuk,
-                'status_karyawan' => $request->status_karyawan ?? 'tetap',
+                'tanggal_berakhir_kontrak' => $request->tanggal_berakhir_kontrak,
+                'gaji_pokok' => $request->gaji_pokok ?? 0,
+                'jatah_cuti' => $request->jatah_cuti ?? 12,
+                'status_karyawan' => $request->status_karyawan,
                 'is_active' => true,
             ]);
 
@@ -81,8 +93,15 @@ class PegawaiController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'nik' => 'required|string|max:50',
+            'no_hp_aktif' => 'nullable|string|max:20',
             'divisi_id' => 'required|exists:divisi,id',
             'jabatan_id' => 'required|exists:jabatan,id',
+            'shift_id' => 'nullable|exists:shift,id',
+            'gaji_pokok' => 'nullable|numeric',
+            'jatah_cuti' => 'nullable|integer',
+            'tanggal_masuk' => 'required|date',
+            'tanggal_berakhir_kontrak' => 'nullable|date',
+            'status_karyawan' => 'required|in:tetap,kontrak,magang',
             'status' => 'required|in:1,0',
         ]);
 
@@ -101,7 +120,14 @@ class PegawaiController extends Controller
             $pegawai->update([
                 'divisi_id' => $request->divisi_id,
                 'jabatan_id' => $request->jabatan_id,
+                'shift_id' => $request->shift_id,
                 'nik' => $request->nik,
+                'no_hp_1' => $request->no_hp_aktif,
+                'tanggal_masuk' => $request->tanggal_masuk,
+                'tanggal_berakhir_kontrak' => $request->tanggal_berakhir_kontrak,
+                'gaji_pokok' => $request->gaji_pokok ?? 0,
+                'jatah_cuti' => $request->jatah_cuti ?? 12,
+                'status_karyawan' => $request->status_karyawan,
                 'is_active' => $request->status,
             ]);
 
@@ -119,7 +145,7 @@ class PegawaiController extends Controller
             DB::beginTransaction();
             $pegawai = Karyawan::findOrFail($id);
             $user = $pegawai->user;
-            
+
             $pegawai->delete();
             if ($user) $user->delete();
 

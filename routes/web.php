@@ -25,6 +25,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\JabatanAksesController;
+use App\Http\Controllers\LokasiAbsensiController;
+use App\Http\Controllers\ShiftController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -128,13 +130,18 @@ Route::middleware(['auth'])->group(function () {
     Route::put('Jabatan-Akses/{id}', [JabatanAksesController::class, 'updateJabatan'])->name('Jabatan-Akses.rename');
     Route::delete('Jabatan-Akses/{id}', [JabatanAksesController::class, 'destroy'])->name('Jabatan-Akses.destroy');
 
-    Route::get('Lokasi-Absensi', function () {
-        return view('admin.setting.lokasi-absensi');
-    })->name('Lokasi-Absensi');
+    Route::get('Lokasi-Absensi', [LokasiAbsensiController::class, 'index'])->name('Lokasi-Absensi');
+    Route::post('Lokasi-Absensi', [LokasiAbsensiController::class, 'store'])->name('Lokasi-Absensi.store');
+    Route::put('Lokasi-Absensi/{id}', [LokasiAbsensiController::class, 'update'])->name('Lokasi-Absensi.update');
+    Route::delete('Lokasi-Absensi/{id}', [LokasiAbsensiController::class, 'destroy'])->name('Lokasi-Absensi.destroy');
+    Route::post('Lokasi-Absensi/update-settings', [LokasiAbsensiController::class, 'updateSettings'])->name('Lokasi-Absensi.update-settings');
 
-    Route::get('Jam-Kerja', function () {
-        return view('admin.setting.jam-kerja');
-    })->name('Jam-Kerja');
+
+    Route::get('Jam-Kerja', [ShiftController::class, 'index'])->name('Jam-Kerja');
+    Route::post('Jam-Kerja', [ShiftController::class, 'store'])->name('Jam-Kerja.store');
+    Route::put('Jam-Kerja/{id}', [ShiftController::class, 'update'])->name('Jam-Kerja.update');
+    Route::delete('Jam-Kerja/{id}', [ShiftController::class, 'destroy'])->name('Jam-Kerja.destroy');
+    Route::get('Jam-Kerja/search-staff', [ShiftController::class, 'searchStaff'])->name('Jam-Kerja.search-staff');
 
     Route::get('Perusahaan', function () {
         return view('admin.setting.perusahaan');
@@ -152,7 +159,7 @@ Route::middleware(['auth'])->group(function () {
         return view('admin.riwayat-login');
     })->name('Riwayat-Login');
 
-    Route::get('Billing', [BillingController::class, 'index'])->name('Billing');
+    Route::get('billing', [BillingController::class, 'index'])->name('Billing');
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');

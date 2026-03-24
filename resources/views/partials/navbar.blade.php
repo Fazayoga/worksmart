@@ -103,7 +103,7 @@
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/img/avatars/1.png') }}" 
+                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/img/avatars/1.png') }}"
                             alt class="w-px-40 h-px-40 rounded-circle" style="object-fit: cover;" />
                     </div>
                 </a>
@@ -113,13 +113,14 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/img/avatars/1.png') }}" 
+                                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('assets/img/avatars/1.png') }}"
                                             alt class="w-px-40 h-px-40 rounded-circle" style="object-fit: cover;" />
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-0">{{ Auth::user()->name }}</h6>
-                                    <small class="text-body-secondary text-capitalize">{{ Auth::user()->status_user }}</small>
+                                    <small
+                                        class="text-body-secondary text-capitalize">{{ Auth::user()->status_user }}</small>
                                 </div>
                             </div>
                         </a>
@@ -133,12 +134,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="icon-base bx bx-cog icon-md me-3"></i><span>Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{{ asset('billing') }}">
                             <span class="d-flex align-items-center align-middle">
                                 <i class="flex-shrink-0 icon-base bx bx-credit-card icon-md me-3"></i><span
                                     class="flex-grow-1 align-middle">Billing Plan</span>
@@ -150,8 +146,8 @@
                         <div class="dropdown-divider my-1"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{{ route('logout') }}" 
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <a class="dropdown-item" href="{{ route('logout') }}"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="icon-base bx bx-power-off icon-md me-3"></i><span>Log Out</span>
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

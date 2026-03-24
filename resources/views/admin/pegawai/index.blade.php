@@ -3,6 +3,8 @@
 @section('title', 'Pegawai')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/pegawai.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 @section('content')
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
@@ -46,8 +48,7 @@
                         </div>
                         <div>
                             <h6 class="mb-0">Pegawai Aktif</h6>
-                            {{-- <h5 class="mb-0 fw-semibold">{{ $pegawaiAktif ?? 0 }}</h5> --}}
-                            <h5 class="mb-0 fw-semibold">25</h5>
+                            <h5 class="mb-0 fw-semibold">{{ $pegawaiAktif ?? 0 }}</h5>
                         </div>
                     </div>
                 </div>
@@ -62,8 +63,7 @@
                         </div>
                         <div>
                             <h6 class="mb-0">Pegawai Tidak Aktif</h6>
-                            {{-- <h5 class="mb-0 fw-semibold">{{ $pegawaiNonaktif ?? 0 }}</h5> --}}
-                            <h5 class="mb-0 fw-semibold">5</h5>
+                            <h5 class="mb-0 fw-semibold">{{ $pegawaiNonaktif ?? 0 }}</h5>
                         </div>
                     </div>
                 </div>
@@ -79,11 +79,12 @@
                 <div class="col-12 col-lg-6">
                     <div class="d-flex flex-column flex-sm-row gap-2">
 
-                        <a href="#" class="btn btn-primary">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#addPegawaiModal">
                             <i class="bx bx-user-plus me-1"></i>
                             <span class="d-none d-sm-inline">Tambah Pegawai</span>
                             <span class="d-inline d-sm-none">Tambah</span>
-                        </a>
+                        </button>
                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importPegawaiModal">
                             <i class="bx bx-upload me-1"></i>
                             <span class="d-none d-sm-inline">Import Data</span>
@@ -143,76 +144,456 @@
                 </thead>
                 <tbody class="table-border-bottom-0">
 
-                    {{-- @foreach ($pegawai as $row) --}}
-                    {{-- <tr data-status="{{ $row->status }}"> --}}
-                    <tr data-status="aktif">
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <img src="../assets/img/avatars/1.png" class="rounded-circle" width="32">
-                                <span>Ahmad Fauzi</span>
-                                {{-- <span>{{ $row->nama }}</span> --}}
-                            </div>
-                        </td>
-                        <td>ahmad@example.com {{-- {{ $row->email }} --}}</td>
-                        <td>Staff IT {{-- {{ $row->jabatan }} --}}</td>
-                        <td>
-                            <span class="badge bg-label-success">Aktif</span>
-                            {{-- 
-                            <span class="badge bg-label-{{ $row->status == 'aktif' ? 'success' : 'secondary' }}">
-                                {{ ucfirst($row->status) }}
-                            </span>
-                            --}}
-                        </td>
-                        <td>12 Jan 2025 {{-- {{ $row->created_at->format('d M Y') }} --}}</td>
-                        <td class="text-center">
-                            <a href="#" class="btn btn-sm btn-warning">
-                                <i class="bx bx-edit"></i>
-                            </a>
-                            <button class="btn btn-sm btn-danger">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    {{-- @endforeach --}}
-
-                    {{-- @foreach ($pegawai as $row) --}}
-                    <tr data-status="nonaktif">
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <img src="../assets/img/avatars/1.png" class="rounded-circle" width="32">
-                                <span>Ahmad Fauzi</span>
-                                {{-- <span>{{ $row->nama }}</span> --}}
-                            </div>
-                        </td>
-                        <td>ahmad@example.com {{-- {{ $row->email }} --}}</td>
-                        <td>Staff IT {{-- {{ $row->jabatan }} --}}</td>
-                        <td>
-                            <span class="badge bg-label-secondary">Nonaktif</span>
-                            {{-- 
-                            <span class="badge bg-label-{{ $row->status == 'aktif' ? 'success' : 'secondary' }}">
-                                {{ ucfirst($row->status) }}
-                            </span>
-                            --}}
-                        </td>
-                        <td>12 Jan 2025 {{-- {{ $row->created_at->format('d M Y') }} --}}</td>
-                        <td class="text-center">
-                            <a href="#" class="btn btn-sm btn-warning">
-                                <i class="bx bx-edit"></i>
-                            </a>
-                            <button class="btn btn-sm btn-danger">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    {{-- @endforeach --}}
+                    @forelse ($pegawai as $row)
+                        <tr data-status="{{ $row->is_active ? 'aktif' : 'nonaktif' }}">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="{{ $row->user->avatar ? asset('storage/' . $row->user->avatar) : asset('assets/img/avatars/1.png') }}"
+                                        class="rounded-circle" width="32">
+                                    <span>{{ $row->user->name ?? 'N/A' }}</span>
+                                </div>
+                            </td>
+                            <td>{{ $row->user->email ?? 'N/A' }}</td>
+                            <td>{{ $row->jabatan->nama_jabatan ?? 'N/A' }}</td>
+                            <td>
+                                <span class="badge bg-label-{{ $row->is_active ? 'success' : 'secondary' }}">
+                                    {{ $row->is_active ? 'Aktif' : 'Nonaktif' }}
+                                </span>
+                            </td>
+                            <td>{{ $row->tanggal_masuk ? $row->tanggal_masuk->format('d M Y') : '-' }}</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-warning edit-pegawai"
+                                    data-id="{{ $row->id }}" data-name="{{ $row->user->name }}"
+                                    data-email="{{ $row->user->email }}" data-nik="{{ $row->nik }}"
+                                    data-no_hp="{{ $row->no_hp_1 }}" data-divisi="{{ $row->divisi_id }}"
+                                    data-jabatan="{{ $row->jabatan_id }}" data-shift="{{ $row->shift_id }}"
+                                    data-gaji="{{ (int) $row->gaji_pokok }}" data-cuti="{{ $row->jatah_cuti }}"
+                                    data-tanggal_masuk="{{ $row->tanggal_masuk ? $row->tanggal_masuk->format('Y-m-d') : '' }}"
+                                    data-tanggal_selesai="{{ $row->tanggal_berakhir_kontrak ? $row->tanggal_berakhir_kontrak->format('Y-m-d') : '' }}"
+                                    data-status_karyawan="{{ $row->status_karyawan }}"
+                                    data-status="{{ $row->is_active ? '1' : '0' }}">
+                                    <i class="bx bx-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-pegawai" data-id="{{ $row->id }}">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-4">Belum ada data pegawai.</td>
+                        </tr>
+                    @endforelse
 
                 </tbody>
 
             </table>
         </div>
     </div>
+
+    <!-- Modal Tambah Pegawai -->
+    <div class="modal fade" id="addPegawaiModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ route('pegawai.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tambah Pegawai Baru</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-4">
+                            <!-- ROW 1 -->
+                            <div class="col-md-4">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" required placeholder="Email">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" name="name" class="form-control" required
+                                    placeholder="Nama lengkap">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nomor HP Aktif</label>
+                                <input type="text" name="no_hp_aktif" class="form-control"
+                                    placeholder="Nomor HP Aktif">
+                            </div>
+
+                            <!-- ROW 2 -->
+                            <div class="col-md-4">
+                                <label class="form-label">Nomor Induk Pegawai (Optional)</label>
+                                <div class="input-group">
+                                    <input type="text" name="nik" id="nik_input" class="form-control"
+                                        placeholder="Nomor Induk Pegawai (Optional)" readonly>
+                                    <button class="btn btn-outline-primary" type="button" id="refresh_nik"
+                                        title="Refresh NIK">
+                                        <i class="bx bx-refresh"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Divisi (Optional)</label>
+                                <select name="divisi_id" class="form-select" required>
+                                    <option value="" disabled selected>--Pilih Opsi--</option>
+                                    @foreach ($divisi as $d)
+                                        <option value="{{ $d->id }}">{{ $d->nama_divisi }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Jabatan</label>
+                                <select name="jabatan_id" id="add_jabatan" class="form-select" required>
+                                    <option value="" disabled selected>--Pilih Opsi--</option>
+                                    @foreach ($jabatan as $j)
+                                        <option value="{{ $j->id }}" data-nama="{{ $j->nama_jabatan }}">
+                                            {{ $j->nama_jabatan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- ROW 3 -->
+                            <div class="col-md-4">
+                                <label class="form-label">Jam Kerja</label>
+                                <select name="shift_id" class="form-select">
+                                    <option value="" selected>--Pilih Opsi--</option>
+                                    @foreach ($shift as $s)
+                                        <option value="{{ $s->id }}">{{ $s->nama_shift }}
+                                            ({{ \Carbon\Carbon::parse($s->jam_masuk)->format('H:i') }} -
+                                            {{ \Carbon\Carbon::parse($s->jam_pulang)->format('H:i') }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Gaji Pokok</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp.</span>
+                                    <input type="number" name="gaji_pokok" class="form-control" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Jatah Cuti / Tahun</label>
+                                <input type="number" name="jatah_cuti" class="form-control" placeholder="Cuti Pegawai"
+                                    value="0">
+                            </div>
+
+                            <!-- ROW 4 -->
+                            <div class="col-md-4">
+                                <label class="form-label">Tanggal Mulai Kerja</label>
+                                <input type="date" name="tanggal_masuk" class="form-control" required
+                                    value="{{ date('Y-m-d') }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Status Karyawan</label>
+                                <select name="status_karyawan" class="form-select" required>
+                                    <option value="tetap">Tetap</option>
+                                    <option value="kontrak">Kontrak</option>
+                                    <option value="magang">Magang</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tanggal Berakhir Kontrak</label>
+                                <input type="date" name="tanggal_berakhir_kontrak" class="form-control">
+                            </div>
+
+                            <!-- ROW 5 (PASSWORD) -->
+                            <div class="col-12">
+                                <label class="form-label">Password</label>
+                                <div class="input-group">
+                                    <input type="password" name="password" id="add_password" class="form-control"
+                                        required placeholder="Minimal 8 karakter">
+                                    <button class="btn btn-outline-secondary toggle-password" type="button"
+                                        data-target="#add_password">
+                                        <i class="bx bx-hide"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Note -->
+                        <div class="mt-4 p-3 rounded bg-secondary text-white small">
+                            <i class="bx bx-info-circle me-1"></i>
+                            * Email dan No HP harus valid karena Pegawai yang ditambahkan akan dikirim email/SMS
+                            pemberitahuan serta user dan password untuk login ke aplikasi Kantor Kita. Pastikan pegawai
+                            tersebut sudah diberi informasi terlebih dahulu.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-save me-1"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Pegawai -->
+    <div class="modal fade" id="editPegawaiModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <form id="editPegawaiForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header border-bottom">
+                        <h5 class="modal-title">Edit Data Pegawai</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- ROW 1 -->
+                            <div class="col-md-4">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" name="name" id="edit_name" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" id="edit_email" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nomor HP Aktif</label>
+                                <input type="text" name="no_hp_aktif" id="edit_no_hp" class="form-control">
+                            </div>
+
+                            <!-- ROW 2 -->
+                            <div class="col-md-4">
+                                <label class="form-label">Nomor Induk Pegawai</label>
+                                <input type="text" name="nik" id="edit_nik" class="form-control" required
+                                    readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Divisi</label>
+                                <select name="divisi_id" id="edit_divisi" class="form-select" required>
+                                    @foreach ($divisi as $d)
+                                        <option value="{{ $d->id }}">{{ $d->nama_divisi }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Jabatan</label>
+                                <select name="jabatan_id" id="edit_jabatan" class="form-select" required>
+                                    @foreach ($jabatan as $j)
+                                        <option value="{{ $j->id }}">{{ $j->nama_jabatan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- ROW 3 -->
+                            <div class="col-md-4">
+                                <label class="form-label">Jam Kerja</label>
+                                <select name="shift_id" id="edit_shift" class="form-select">
+                                    <option value="">--Pilih Opsi--</option>
+                                    @foreach ($shift as $s)
+                                        <option value="{{ $s->id }}">{{ $s->nama_shift }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Gaji Pokok</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp.</span>
+                                    <input type="number" name="gaji_pokok" id="edit_gaji" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Jatah Cuti / Tahun</label>
+                                <input type="number" name="jatah_cuti" id="edit_cuti" class="form-control">
+                            </div>
+
+                            <!-- ROW 4 -->
+                            <div class="col-md-4">
+                                <label class="form-label">Tanggal Mulai Kerja</label>
+                                <input type="date" name="tanggal_masuk" id="edit_tanggal_masuk" class="form-control"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Status Karyawan</label>
+                                <select name="status_karyawan" id="edit_status_karyawan" class="form-select" required>
+                                    <option value="tetap">Tetap</option>
+                                    <option value="kontrak">Kontrak</option>
+                                    <option value="magang">Magang</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tanggal Berakhir Kontrak</label>
+                                <input type="date" name="tanggal_berakhir_kontrak" id="edit_tanggal_selesai"
+                                    class="form-control">
+                            </div>
+
+                            <!-- ROW 5 -->
+                            <div class="col-md-6">
+                                <label class="form-label">Status Akun</label>
+                                <select name="status" id="edit_status" class="form-select" required>
+                                    <option value="1">Aktif</option>
+                                    <option value="0">Nonaktif</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Password <small class="text-muted">(Kosongkan jika tidak ingin
+                                        diubah)</small></label>
+                                <div class="input-group">
+                                    <input type="password" name="password" id="edit_password" class="form-control"
+                                        placeholder="Minimal 8 karakter">
+                                    <button class="btn btn-outline-secondary toggle-password" type="button"
+                                        data-target="#edit_password">
+                                        <i class="bx bx-hide"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-save me-1"></i> Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/pegawai-filter.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            // Success Alert
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            @endif
+
+            // Error Alert
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '{{ session('error') }}',
+                });
+            @endif
+
+            // Open Edit Modal
+            $('.edit-pegawai').on('click', function() {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                const email = $(this).data('email');
+                const no_hp = $(this).data('no_hp');
+                const nik = $(this).data('nik');
+                const divisi = $(this).data('divisi');
+                const jabatan = $(this).data('jabatan');
+                const shift = $(this).data('shift');
+                const gaji = $(this).data('gaji');
+                const cuti = $(this).data('cuti');
+                const tgl_masuk = $(this).data('tanggal_masuk');
+                const tgl_selesai = $(this).data('tanggal_selesai');
+                const status_karyawan = $(this).data('status_karyawan');
+                const status = $(this).data('status');
+
+                $('#edit_name').val(name);
+                $('#edit_email').val(email);
+                $('#edit_no_hp').val(no_hp);
+                $('#edit_nik').val(nik);
+                $('#edit_divisi').val(divisi);
+                $('#edit_jabatan').val(jabatan);
+                $('#edit_shift').val(shift);
+                $('#edit_gaji').val(gaji);
+                $('#edit_cuti').val(cuti);
+                $('#edit_tanggal_masuk').val(tgl_masuk);
+                $('#edit_tanggal_selesai').val(tgl_selesai);
+                $('#edit_status_karyawan').val(status_karyawan);
+                $('#edit_status').val(status);
+
+                $('#editPegawaiForm').attr('action', `/pegawai/${id}`);
+                $('#editPegawaiModal').modal('show');
+            });
+
+            // Delete Pegawai
+            $('.delete-pegawai').on('click', function() {
+                const id = $(this).data('id');
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data pegawai akan dihapus permanen dari sistem!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/pegawai/${id}`,
+                            type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire(
+                                        'Terhapus!',
+                                        response.message,
+                                        'success'
+                                    ).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Gagal!',
+                                        response.message,
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+            // Generate NIK Logic
+            function generateNIK() {
+                const selectedJabatan = $('#add_jabatan option:selected');
+                const jabatanNama = selectedJabatan.data('nama');
+
+                if (!jabatanNama) return;
+
+                // Ambil kata pertama dan jadikan uppercase (ADMIN, STAFF, HRD, dll)
+                const prefix = jabatanNama.split(' ')[0].toUpperCase();
+
+                // Generate 5 karakter random alphanumeric
+                const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+
+                const nik = `${prefix}-${randomStr}`;
+                $('#nik_input').val(nik);
+            }
+
+            // Trigger generate on Jabatan change
+            $('#add_jabatan').on('change', function() {
+                generateNIK();
+            });
+
+            // Trigger generate on Refresh click
+            $('#refresh_nik').on('click', function() {
+                generateNIK();
+            });
+            // Password Visibility Toggle
+            $('.toggle-password').on('click', function() {
+                const target = $($(this).data('target'));
+                const icon = $(this).find('i');
+                if (target.attr('type') === 'password') {
+                    target.attr('type', 'text');
+                    icon.removeClass('bx-hide').addClass('bx-show');
+                } else {
+                    target.attr('type', 'password');
+                    icon.removeClass('bx-show').addClass('bx-hide');
+                }
+            });
+        });
+    </script>
 @endpush

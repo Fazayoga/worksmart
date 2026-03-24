@@ -19,6 +19,8 @@ class Karyawan extends Model
         'shift_id',
         'nik',
         'tanggal_masuk',
+        'tanggal_berakhir_kontrak',
+        'jatah_cuti',
         'status_karyawan',
         'gaji_pokok',
         'is_active',
@@ -48,6 +50,7 @@ class Karyawan extends Model
         'kontak_darurat_nama',
         'kontak_darurat_hp',
         'kontak_darurat_status',
+        'jatah_cuti',
         'link_facebook',
         'link_twitter',
         'link_instagram',
@@ -57,6 +60,7 @@ class Karyawan extends Model
 
     protected $casts = [
         'tanggal_masuk' => 'date',
+        'tanggal_berakhir_kontrak' => 'date',
         'gaji_pokok' => 'decimal:2',
         'is_active' => 'boolean'
     ];

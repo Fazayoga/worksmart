@@ -83,7 +83,7 @@
         <div class="modal-dialog modal-lg">
             <form action="{{ route('Jabatan-Akses.store') }}" method="POST" class="modal-content">
                 @csrf
-                <div class="modal-header border-bottom">
+                <div class="modal-header">
                     <h5 class="modal-title">Tambah Jabatan & Hak Akses</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -120,7 +120,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="modal-footer border-top">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan Jabatan</button>
                 </div>
@@ -134,7 +134,7 @@
             <form id="editJabatanForm" method="POST" class="modal-content">
                 @csrf
                 @method('PUT')
-                <div class="modal-header border-bottom">
+                <div class="modal-header">
                     <h5 class="modal-title">Edit Jabatan & Hak Akses</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
