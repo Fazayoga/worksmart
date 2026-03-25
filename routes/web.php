@@ -47,6 +47,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pegawai', [PegawaiController::class, 'store'])->name('pegawai.store');
     Route::put('/pegawai/{id}', [PegawaiController::class, 'update'])->name('pegawai.update');
     Route::delete('/pegawai/{id}', [PegawaiController::class, 'destroy'])->name('pegawai.destroy');
+    Route::post('/pegawai/{id}/reactivate', [PegawaiController::class, 'reactivate'])->name('pegawai.reactivate');
+    Route::get('/pegawai-export', [PegawaiController::class, 'exportCsv'])->name('pegawai.export');
+    Route::post('/pegawai-import', [PegawaiController::class, 'importCsv'])->name('pegawai.import');
+    Route::get('/pegawai-template', [PegawaiController::class, 'downloadTemplate'])->name('pegawai.template');
 
     Route::get('/Slip-Gaji', function () {
         return view('admin.slip-gaji.index');

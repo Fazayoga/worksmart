@@ -8,7 +8,16 @@
         .btn-emerald { background-color: #10b981 !important; color: white; }
         .btn-emerald:hover { background-color: #059669 !important; color: white; }
         .list-group-item-action:hover { background-color: #f8f9fa; cursor: pointer; }
+        .staff-item { transition: all 0.2s; border-radius: 8px; margin-bottom: 2px; }
+        .staff-item:hover { background-color: #f0f7ff; }
+        .staff-item .form-check-input { width: 1.1rem; height: 1.1rem; margin-top: 0.15rem; }
+        
+        /* Select2 Premium Styling */
+        .select2-container--bootstrap-5 .select2-selection { border-radius: 8px; border: 1px solid #dee2e6; }
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__badge { background-color: #696cff; border-radius: 4px; }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 @endpush
 
 @section('content')
@@ -79,8 +88,9 @@
                         <th>Jam Mulai</th>
                         <th>Jam Selesai</th>
                         <th>Dispensasi</th>
-                        <th style="width: 25%">Hari Kerja</th>
+                        <th style="width: 15%">Hari Kerja</th>
                         <th>Hari Libur</th>
+                        <th>Total Staff</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -96,6 +106,11 @@
                                 <div class="small text-muted text-wrap" style="max-width: 250px;">({{ $row->hari_kerja ?? '-' }})</div>
                             </td>
                             <td class="text-center small text-muted">{{ $row->hari_libur ?? '-' }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-info rounded-pill" data-bs-toggle="tooltip" title="{{ $row->karyawan->map(fn($k) => $k->user->name)->join(', ') }}">
+                                    {{ $row->karyawan->count() }} Orang
+                                </span>
+                            </td>
                             <td class="text-center">
                                 <button class="btn btn-warning btn-sm edit-shift" 
                                     data-id="{{ $row->id }}"
@@ -215,19 +230,11 @@
 
                         <div class="mb-0">
                             <label class="form-label fw-semibold text-muted small mb-1">Staff Pilih</label>
-                            <div class="mb-2">
-                                <input type="text" class="form-control form-control-sm search-staff-list" data-target="staff-list-add" placeholder="Cari nama staff...">
-                            </div>
-                            <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto;" id="staff-list-add">
+                            <select name="staff_ids[]" id="staff-select-add" class="form-select select2-staff" multiple data-placeholder="Cari & Pilih Staff...">
                                 @foreach($all_staff as $s)
-                                    <div class="form-check staff-item">
-                                        <input class="form-check-input select-staff-checkbox" type="checkbox" name="staff_ids[]" value="{{ $s->id }}" id="staff_add_{{ $s->id }}" data-name="{{ $s->user->name }}">
-                                        <label class="form-check-label small" for="staff_add_{{ $s->id }}">
-                                            {{ $s->user->name }}
-                                        </label>
-                                    </div>
+                                    <option value="{{ $s->id }}">{{ $s->user->name }}</option>
                                 @endforeach
-                            </div>
+                            </select>
                             <div id="selected_staff_count_add" class="mt-2 text-muted small">0 Staff Terpilih</div>
                         </div>
                     </div>
@@ -331,19 +338,11 @@
 
                         <div class="mb-0">
                             <label class="form-label fw-semibold text-muted small mb-1">Staff Pilih</label>
-                            <div class="mb-2">
-                                <input type="text" class="form-control form-control-sm search-staff-list" data-target="staff-list-edit" placeholder="Cari nama staff...">
-                            </div>
-                            <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto;" id="staff-list-edit">
+                            <select name="staff_ids[]" id="staff-select-edit" class="form-select select2-staff" multiple data-placeholder="Cari & Pilih Staff...">
                                 @foreach($all_staff as $s)
-                                    <div class="form-check staff-item">
-                                        <input class="form-check-input select-staff-checkbox edit-staff-checkbox" type="checkbox" name="staff_ids[]" value="{{ $s->id }}" id="staff_edit_{{ $s->id }}" data-name="{{ $s->user->name }}">
-                                        <label class="form-check-label small" for="staff_edit_{{ $s->id }}">
-                                            {{ $s->user->name }}
-                                        </label>
-                                    </div>
+                                    <option value="{{ $s->id }}">{{ $s->user->name }}</option>
                                 @endforeach
-                            </div>
+                            </select>
                             <div id="selected_staff_count_edit" class="mt-2 text-muted small">0 Staff Terpilih</div>
                         </div>
                     </div>
@@ -360,46 +359,52 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
-            let selectedStaff = [];
+            // Initialize Tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+              return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
 
-            // Staff Selection Logic (Client-side Search)
-            $('.search-staff-list').on('keyup', function() {
-                const q = $(this).val().toLowerCase();
-                const target = $(this).data('target');
-                $(`#${target} .staff-item`).each(function() {
-                    const name = $(this).find('label').text().toLowerCase();
-                    $(this).toggle(name.includes(q));
+            // Initialize Select2
+            $('.select2-staff').each(function() {
+                $(this).select2({
+                    theme: 'bootstrap-5',
+                    dropdownParent: $(this).closest('.modal'),
+                    width: '100%'
                 });
             });
 
-            function updateSelectedCount(modalId) {
-                const count = $(modalId).find('.select-staff-checkbox:checked').length;
-                $(modalId).find('[id^="selected_staff_count"]').text(`${count} Staff Terpilih`);
-            }
-
-            $('.select-staff-checkbox').on('change', function() {
-                updateSelectedCount($(this).closest('.modal'));
+            // Update selected count for Select2
+            $('.select2-staff').on('change', function() {
+                const count = $(this).val() ? $(this).val().length : 0;
+                const modalId = $(this).closest('.modal').attr('id');
+                $(`#selected_staff_count_${modalId.includes('add') ? 'add' : 'edit'}`).text(`${count} Staff Terpilih`);
             });
 
             // Add Shift
             $('#addShiftForm').on('submit', function(e) {
                 e.preventDefault();
+                const btn = $(this).find('button[type="submit"]');
+                const btnHtml = btn.html();
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...');
+
                 const formData = new FormData(this);
                 formData.append('jam_masuk', $(this).find('[name="jam_masuk_h"]').val() + ':' + $(this).find('[name="jam_masuk_m"]').val());
                 formData.append('jam_pulang', $(this).find('[name="jam_pulang_h"]').val() + ':' + $(this).find('[name="jam_pulang_m"]').val());
                 
-                // Collect checkbox values
+                // hari_kerja and hari_libur handled as before checkboxes
                 let hk = [];
                 $(this).find('[name="hari_kerja[]"]:checked').each(function() { hk.push($(this).val()); });
-                formData.delete('hari_kerja[]'); // Remove original array
+                formData.delete('hari_kerja[]'); 
                 formData.append('hari_kerja', hk.join(', '));
                 
                 let hl = [];
                 $(this).find('[name="hari_libur[]"]:checked').each(function() { hl.push($(this).val()); });
-                formData.delete('hari_libur[]'); // Remove original array
+                formData.delete('hari_libur[]'); 
                 formData.append('hari_libur', hl.join(', '));
 
                 $.ajax({
@@ -410,11 +415,15 @@
                     contentType: false,
                     success: function(res) {
                         if (res.success) {
+                            $('#addShiftModal').modal('hide');
                             Swal.fire('Berhasil', res.message, 'success').then(() => location.reload());
                         }
                     },
                     error: function(xhr) {
                         Swal.fire('Gagal', xhr.responseJSON.message || 'Terjadi kesalahan', 'error');
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false).html(btnHtml);
                     }
                 });
             });
@@ -448,20 +457,19 @@
                     $(`#edit_hl_${day}`).prop('checked', true);
                 });
 
-                // Set staff checkboxes
-                $('.edit-staff-checkbox').prop('checked', false);
-                const staffIds = $(this).data('staff').toString().split(',').filter(s => s !== "");
-                staffIds.forEach(sid => {
-                    $(`#staff_edit_${sid}`).prop('checked', true);
-                });
-                updateSelectedCount('#editShiftModal');
-
+                // Set staff Select2 values
+                $('#staff-select-edit').val(staffIds).trigger('change');
+                
                 $('#editShiftForm').attr('action', `/Jam-Kerja/${id}`);
                 $('#editShiftModal').modal('show');
             });
 
             $('#editShiftForm').on('submit', function(e) {
                 e.preventDefault();
+                const btn = $(this).find('button[type="submit"]');
+                const btnHtml = btn.html();
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...');
+
                 const id = $(this).attr('action').split('/').pop();
                 const formData = new FormData(this);
                 formData.append('jam_masuk', $(this).find('[name="jam_masuk_h"]').val() + ':' + $(this).find('[name="jam_masuk_m"]').val());
@@ -486,11 +494,15 @@
                     contentType: false,
                     success: function(res) {
                         if (res.success) {
+                            $('#editShiftModal').modal('hide');
                             Swal.fire('Berhasil', res.message, 'success').then(() => location.reload());
                         }
                     },
                     error: function(xhr) {
                         Swal.fire('Gagal', xhr.responseJSON.message || 'Terjadi kesalahan', 'error');
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false).html(btnHtml);
                     }
                 });
             });
@@ -508,13 +520,21 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `/Jam-Kerja/${id}`,
-                            method: "DELETE",
-                            data: { _token: "{{ csrf_token() }}" },
+                            url: "{{ route('Jam-Kerja.destroy', ':id') }}".replace(':id', id),
+                            method: "POST",
+                            data: { 
+                                _token: "{{ csrf_token() }}",
+                                _method: "DELETE"
+                            },
                             success: function(res) {
                                 if (res.success) {
                                     Swal.fire('Terhapus!', res.message, 'success').then(() => location.reload());
+                                } else {
+                                    Swal.fire('Gagal', res.message, 'error');
                                 }
+                            },
+                            error: function(xhr) {
+                                Swal.fire('Gagal', xhr.responseJSON.message || 'Terjadi kesalahan sistem', 'error');
                             }
                         });
                     }

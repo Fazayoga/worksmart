@@ -91,7 +91,7 @@
                             <span class="d-inline d-sm-none">Import</span>
                         </button>
 
-                        <button class="btn btn-outline-secondary">
+                        <button class="btn btn-outline-secondary" id="exportBtn">
                             <i class="bx bx-download me-1"></i>
                             <span class="d-none d-sm-inline">Edit Via Excel</span>
                             <span class="d-inline d-sm-none">Edit</span>
@@ -104,8 +104,8 @@
                 <div class="col-12 col-lg-6">
                     <div class="d-flex flex-column flex-md-row gap-2 justify-content-lg-end">
 
-                        <select class="form-select w-100 w-md-auto">
-                            <option selected disabled>Filter Berdasarkan</option>
+                        <select class="form-select w-100 w-md-auto" id="filterBy">
+                            <option value="" selected>Filter Berdasarkan</option>
                             <option value="nama">Nama</option>
                             <option value="divisi">Divisi</option>
                             <option value="jabatan">Jabatan</option>
@@ -115,12 +115,12 @@
                             <span class="input-group-text">
                                 <i class="bx bx-search"></i>
                             </span>
-                            <input type="text" class="form-control" placeholder="Cari Pegawai">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Cari Pegawai...">
                         </div>
                         <!-- SORT ICON -->
                         <button type="button"
                             class="btn btn-outline-secondary d-flex align-items-center justify-content-center"
-                            id="sortTanggal" data-sort="desc" title="Pendaftar Terbaru">
+                            id="sortBtn" data-sort="desc" title="Terbaru">
                             <i class="bx bx-sort-down fs-5"></i>
                         </button>
                     </div>
@@ -142,49 +142,8 @@
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="table-border-bottom-0">
-
-                    @forelse ($pegawai as $row)
-                        <tr data-status="{{ $row->is_active ? 'aktif' : 'nonaktif' }}">
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <img src="{{ $row->user->avatar ? asset('storage/' . $row->user->avatar) : asset('assets/img/avatars/1.png') }}"
-                                        class="rounded-circle" width="32">
-                                    <span>{{ $row->user->name ?? 'N/A' }}</span>
-                                </div>
-                            </td>
-                            <td>{{ $row->user->email ?? 'N/A' }}</td>
-                            <td>{{ $row->jabatan->nama_jabatan ?? 'N/A' }}</td>
-                            <td>
-                                <span class="badge bg-label-{{ $row->is_active ? 'success' : 'secondary' }}">
-                                    {{ $row->is_active ? 'Aktif' : 'Nonaktif' }}
-                                </span>
-                            </td>
-                            <td>{{ $row->tanggal_masuk ? $row->tanggal_masuk->format('d M Y') : '-' }}</td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-warning edit-pegawai"
-                                    data-id="{{ $row->id }}" data-name="{{ $row->user->name }}"
-                                    data-email="{{ $row->user->email }}" data-nik="{{ $row->nik }}"
-                                    data-no_hp="{{ $row->no_hp_1 }}" data-divisi="{{ $row->divisi_id }}"
-                                    data-jabatan="{{ $row->jabatan_id }}" data-shift="{{ $row->shift_id }}"
-                                    data-gaji="{{ (int) $row->gaji_pokok }}" data-cuti="{{ $row->jatah_cuti }}"
-                                    data-tanggal_masuk="{{ $row->tanggal_masuk ? $row->tanggal_masuk->format('Y-m-d') : '' }}"
-                                    data-tanggal_selesai="{{ $row->tanggal_berakhir_kontrak ? $row->tanggal_berakhir_kontrak->format('Y-m-d') : '' }}"
-                                    data-status_karyawan="{{ $row->status_karyawan }}"
-                                    data-status="{{ $row->is_active ? '1' : '0' }}">
-                                    <i class="bx bx-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-pegawai" data-id="{{ $row->id }}">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-4">Belum ada data pegawai.</td>
-                        </tr>
-                    @endforelse
-
+                <tbody class="table-border-bottom-0" id="employeeTableBody">
+                    @include('admin.pegawai._table')
                 </tbody>
 
             </table>
@@ -284,7 +243,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Status Karyawan</label>
-                                <select name="status_karyawan" class="form-select" required>
+                                <select name="status_karyawan" id="add_status_karyawan" class="form-select status-karyawan-select" required>
                                     <option value="tetap">Tetap</option>
                                     <option value="kontrak">Kontrak</option>
                                     <option value="magang">Magang</option>
@@ -292,7 +251,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Tanggal Berakhir Kontrak</label>
-                                <input type="date" name="tanggal_berakhir_kontrak" class="form-control">
+                                <input type="date" name="tanggal_berakhir_kontrak" id="add_tanggal_berakhir_kontrak" class="form-control contract-date-input">
                             </div>
 
                             <!-- ROW 5 (PASSWORD) -->
@@ -408,7 +367,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Status Karyawan</label>
-                                <select name="status_karyawan" id="edit_status_karyawan" class="form-select" required>
+                                <select name="status_karyawan" id="edit_status_karyawan" class="form-select status-karyawan-select" required>
                                     <option value="tetap">Tetap</option>
                                     <option value="kontrak">Kontrak</option>
                                     <option value="magang">Magang</option>
@@ -421,14 +380,14 @@
                             </div>
 
                             <!-- ROW 5 -->
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label">Status Akun</label>
                                 <select name="status" id="edit_status" class="form-select" required>
                                     <option value="1">Aktif</option>
                                     <option value="0">Nonaktif</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <label class="form-label">Password <small class="text-muted">(Kosongkan jika tidak ingin
                                         diubah)</small></label>
                                 <div class="input-group">
@@ -453,6 +412,43 @@
         </div>
     </div>
 
+    <!-- Modal Import Pegawai -->
+    <div class="modal fade" id="importPegawaiModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ route('pegawai.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import Data Pegawai</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Pilih File CSV/Excel</label>
+                            <input type="file" name="file" class="form-control" accept=".csv" required>
+                            <div class="form-text">Gunakan file .csv sebagai format standar.</div>
+                        </div>
+                        <div class="p-3 rounded bg-light border">
+                            <h6 class="mb-2"><i class="bx bx-info-circle me-1 text-primary"></i> Petunjuk Import:</h6>
+                            <ul class="small mb-0 ps-3">
+                                <li><strong>NIK</strong>: Pengenal unik. Jika NIK sudah ada, data pegawai tersebut akan diperbarui.</li>
+                                <li><strong>Format Tanggal</strong>: Gunakan YYYY-MM-DD (Contoh: 2024-03-25).</li>
+                                <li><strong>Password</strong>: Pegawai baru akan memiliki password default: <code>password123</code>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{{ route('pegawai.template') }}" class="btn btn-link me-auto">
+                            <i class="bx bx-download me-1"></i> Unduh Template
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Mulai Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -460,6 +456,190 @@
     <script src="{{ asset('js/pegawai-filter.js') }}"></script>
     <script>
         $(document).ready(function() {
+            // Function to toggle contract date input
+            function toggleContractDate(statusSelect) {
+                const modal = $(statusSelect).closest('.modal');
+                const status = $(statusSelect).val();
+                const contractDateInput = modal.find('input[name="tanggal_berakhir_kontrak"]');
+                
+                if (status === 'tetap') {
+                    contractDateInput.prop('disabled', true).val('').attr('required', false);
+                    contractDateInput.closest('div').addClass('opacity-50');
+                } else {
+                    contractDateInput.prop('disabled', false).attr('required', true);
+                    contractDateInput.closest('div').removeClass('opacity-50');
+                }
+            }
+
+            // Bind change event to status selects
+            $('.status-karyawan-select').on('change', function() {
+                toggleContractDate(this);
+            });
+
+            // Initial call for Add Modal (reset to default)
+            $('#addPegawaiModal').on('show.bs.modal', function() {
+                const statusSelect = $(this).find('#add_status_karyawan');
+                statusSelect.val('tetap'); // Default to 'tetap'
+                toggleContractDate(statusSelect);
+            });
+
+            // Search, Filter & Sort Logic
+            let searchTimer;
+            function performSearch() {
+                const q = $('#searchInput').val();
+                const filter = $('#filterBy').val();
+                const sort = $('#sortBtn').data('sort');
+                const status = $('.pegawai-filter.active').data('status');
+
+                $.ajax({
+                    url: "{{ route('pegawai') }}",
+                    type: "GET",
+                    data: { q, filter, sort, status },
+                    success: function(html) {
+                        $('#employeeTableBody').html(html);
+                        // Re-initialize events for new rows
+                        initTableEvents();
+                    }
+                });
+            }
+
+            $('#searchInput').on('keyup', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(performSearch, 500);
+            });
+
+            $('#filterBy').on('change', performSearch);
+            
+            // Sync with tabs
+            $('.pegawai-filter').on('click', function() {
+                // The pegawai-filter.js already handles the .active class
+                // We just need to trigger the search after a small delay to ensure .active class is set
+                setTimeout(performSearch, 50);
+            });
+
+            $('#sortBtn').on('click', function() {
+                const currentSort = $(this).data('sort');
+                const newSort = currentSort === 'desc' ? 'asc' : 'desc';
+                $(this).data('sort', newSort);
+                $(this).find('i').toggleClass('bx-sort-down bx-sort-up');
+                performSearch();
+            });
+
+            function initTableEvents() {
+                // Edit event
+                $('.edit-pegawai').off('click').on('click', function() {
+                    const id = $(this).data('id');
+                    const name = $(this).data('name');
+                    const email = $(this).data('email');
+                    const no_hp = $(this).data('no_hp');
+                    const nik = $(this).data('nik');
+                    const divisi = $(this).data('divisi');
+                    const jabatan = $(this).data('jabatan');
+                    const shift = $(this).data('shift');
+                    const gaji = $(this).data('gaji');
+                    const cuti = $(this).data('cuti');
+                    const tgl_masuk = $(this).data('tanggal_masuk');
+                    const tgl_selesai = $(this).data('tanggal_selesai');
+                    const status_karyawan = $(this).data('status_karyawan');
+                    const status = $(this).data('status');
+
+                    $('#edit_name').val(name);
+                    $('#edit_email').val(email);
+                    $('#edit_no_hp').val(no_hp);
+                    $('#edit_nik').val(nik);
+                    $('#edit_divisi').val(divisi);
+                    $('#edit_jabatan').val(jabatan);
+                    $('#edit_shift').val(shift);
+                    $('#edit_gaji').val(gaji);
+                    $('#edit_cuti').val(cuti);
+                    $('#edit_tanggal_masuk').val(tgl_masuk);
+                    $('#edit_tanggal_selesai').val(tgl_selesai);
+                    $('#edit_status_karyawan').val(status_karyawan);
+                    $('#edit_status').val(status);
+
+                    $('#editPegawaiForm').attr('action', `/pegawai/${id}`);
+                    $('#editPegawaiModal').modal('show');
+                    
+                    toggleContractDate($('#edit_status_karyawan'));
+                });
+
+                // Export / Edit Via Excel Logic
+            $('#exportBtn').on('click', function() {
+                window.location.href = "{{ route('pegawai.export') }}";
+            });
+
+            // Delete/Nonaktifkan event
+                $('.delete-pegawai').off('click').on('click', function() {
+                    const id = $(this).data('id');
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: "Pegawai ini akan dipindahkan ke daftar Tidak Aktif!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Nonaktifkan!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/pegawai/${id}`,
+                                type: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire('Berhasil!', response.message, 'success').then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire('Gagal!', response.message, 'error');
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+
+                // Reactivate event
+                $('.reactivate-pegawai').off('click').on('click', function() {
+                    const id = $(this).data('id');
+                    Swal.fire({
+                        title: 'Aktifkan Kembali?',
+                        text: "Pegawai ini akan dipindahkan kembali ke daftar Aktif!",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Aktifkan!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/pegawai/${id}/reactivate`,
+                                type: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire('Berhasil!', response.message, 'success').then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire('Gagal!', response.message, 'error');
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            // Initial call
+            initTableEvents();
+
             // Success Alert
             @if (session('success'))
                 Swal.fire({
@@ -513,6 +693,9 @@
 
                 $('#editPegawaiForm').attr('action', `/pegawai/${id}`);
                 $('#editPegawaiModal').modal('show');
+                
+                // Call toggle after value is set
+                toggleContractDate($('#edit_status_karyawan'));
             });
 
             // Delete Pegawai
@@ -520,12 +703,12 @@
                 const id = $(this).data('id');
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
-                    text: "Data pegawai akan dihapus permanen dari sistem!",
+                    text: "Pegawai ini akan dipindahkan ke daftar Tidak Aktif!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, hapus!',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Nonaktifkan!',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -538,7 +721,49 @@
                             success: function(response) {
                                 if (response.success) {
                                     Swal.fire(
-                                        'Terhapus!',
+                                        'Berhasil!',
+                                        response.message,
+                                        'success'
+                                    ).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Gagal!',
+                                        response.message,
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Reactivate Pegawai
+            $('.reactivate-pegawai').on('click', function() {
+                const id = $(this).data('id');
+                Swal.fire({
+                    title: 'Aktifkan Kembali?',
+                    text: "Pegawai ini akan dipindahkan kembali ke daftar Aktif!",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Aktifkan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/pegawai/${id}/reactivate`,
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire(
+                                        'Berhasil!',
                                         response.message,
                                         'success'
                                     ).then(() => {

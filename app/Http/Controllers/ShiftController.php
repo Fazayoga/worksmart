@@ -7,6 +7,7 @@ use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ShiftController extends Controller
 {
@@ -21,7 +22,12 @@ class ShiftController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_shift' => 'required|string|max:255',
+            'nama_shift' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('shift')->where(fn ($query) => $query->where('perusahaan_id', Auth::user()->perusahaan_id))
+            ],
             'jam_masuk' => 'required',
             'jam_pulang' => 'required',
             'toleransi_terlambat' => 'required|integer',
@@ -61,7 +67,12 @@ class ShiftController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_shift' => 'required|string|max:255',
+            'nama_shift' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('shift')->where(fn ($query) => $query->where('perusahaan_id', Auth::user()->perusahaan_id))->ignore($id)
+            ],
             'jam_masuk' => 'required',
             'jam_pulang' => 'required',
             'toleransi_terlambat' => 'required|integer',
@@ -106,15 +117,21 @@ class ShiftController extends Controller
     {
         try {
             DB::beginTransaction();
-            $shift = Shift::findOrFail($id);
-            // Nullify shift_id for assigned employees
+            $shift = Shift::where('perusahaan_id', Auth::user()->perusahaan_id)->findOrFail($id);
+            
+            // Nullify shift_id for assigned employees before permanent delete
             Karyawan::where('shift_id', $shift->id)->update(['shift_id' => null]);
-            $shift->delete();
+            
+            // Physical deletion from database
+            if (!$shift->forceDelete()) {
+                throw new \Exception("Gagal menghapus data secara permanen.");
+            }
+            
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Jadwal kerja berhasil dihapus.']);
+            return response()->json(['success' => true, 'message' => 'Jadwal kerja berhasil dihapus secara permanen.']);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus: ' . $e->getMessage()], 500);
         }
     }
 

@@ -84,4 +84,9 @@ class Karyawan extends Model
     {
         return $this->belongsTo(Jabatan::class);
     }
+
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
+    }
 }

@@ -12,6 +12,7 @@
             border: 1px solid #ddd;
             z-index: 1;
         }
+
         .search-map-box {
             position: absolute;
             top: 10px;
@@ -56,7 +57,8 @@
             <div class="row align-items-center g-3">
                 <div class="col-md-3">
                     <div class="form-check form-switch">
-                        <input class="form-check-input setting-toggle" type="checkbox" id="switchRadius" data-setting="radius" {{ $settings['is_within_radius'] ? 'checked' : '' }}>
+                        <input class="form-check-input setting-toggle" type="checkbox" id="switchRadius"
+                            data-setting="radius" {{ $settings['is_within_radius'] ? 'checked' : '' }}>
                         <label class="form-check-label" for="switchRadius">
                             Wajib Dalam Jangkauan
                         </label>
@@ -65,7 +67,8 @@
 
                 <div class="col-md-3">
                     <div class="form-check form-switch">
-                        <input class="form-check-input setting-toggle" type="checkbox" id="switchSelfie" data-setting="selfie" {{ $settings['is_selfie'] ? 'checked' : '' }}>
+                        <input class="form-check-input setting-toggle" type="checkbox" id="switchSelfie"
+                            data-setting="selfie" {{ $settings['is_selfie'] ? 'checked' : '' }}>
                         <label class="form-check-label" for="switchSelfie">
                             Wajib Foto Selfie
                         </label>
@@ -74,7 +77,8 @@
 
                 <div class="col-md-3">
                     <div class="form-check form-switch">
-                        <input class="form-check-input setting-toggle" type="checkbox" id="switchStandby" data-setting="standby" {{ $settings['is_standby'] ? 'checked' : '' }}>
+                        <input class="form-check-input setting-toggle" type="checkbox" id="switchStandby"
+                            data-setting="standby" {{ $settings['is_standby'] ? 'checked' : '' }}>
                         <label class="form-check-label" for="switchStandby">
                             Wajib Standby Kantor
                         </label>
@@ -114,14 +118,10 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <button class="btn btn-warning btn-sm edit-lokasi" 
-                                    data-id="{{ $row->id }}"
-                                    data-nama="{{ $row->nama_lokasi }}"
-                                    data-alamat="{{ $row->alamat }}"
-                                    data-lat="{{ $row->latitude }}"
-                                    data-lng="{{ $row->longitude }}"
-                                    data-radius="{{ $row->radius_meter }}"
-                                    data-zona="{{ $row->zona_waktu }}">
+                                <button class="btn btn-warning btn-sm edit-lokasi" data-id="{{ $row->id }}"
+                                    data-nama="{{ $row->nama_lokasi }}" data-alamat="{{ $row->alamat }}"
+                                    data-lat="{{ $row->latitude }}" data-lng="{{ $row->longitude }}"
+                                    data-radius="{{ $row->radius_meter }}" data-zona="{{ $row->zona_waktu }}">
                                     <i class="bx bx-edit"></i>
                                 </button>
                                 <button class="btn btn-danger btn-sm delete-lokasi" data-id="{{ $row->id }}">
@@ -155,7 +155,8 @@
                             <div class="col-md-6 border-end pr-4">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold small text-muted">NAMA LOKASI</label>
-                                    <input type="text" name="nama_lokasi" class="form-control" required placeholder="Contoh: Kantor Pusat">
+                                    <input type="text" name="nama_lokasi" class="form-control" required
+                                        placeholder="Contoh: Kantor Pusat">
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
@@ -179,9 +180,10 @@
                                 </div>
                                 <div class="mb-0">
                                     <label class="form-label fw-bold small text-muted">ALAMAT LENGKAP</label>
-                                    <textarea name="alamat" id="add_alamat_text" class="form-control" rows="6" placeholder="Masukkan alamat lengkap..."></textarea>
+                                    <textarea name="alamat" id="add_alamat_text" class="form-control" rows="6"
+                                        placeholder="Masukkan alamat lengkap..."></textarea>
                                 </div>
-                                
+
                                 <input type="hidden" name="latitude" id="add_lat">
                                 <input type="hidden" name="longitude" id="add_lng">
                             </div>
@@ -189,7 +191,8 @@
                             <!-- Right: Map -->
                             <div class="col-md-6 position-relative">
                                 <div class="input-group search-map-box shadow-none">
-                                    <input type="text" id="add_search_input" class="form-control border-end-0" placeholder="Cari Alamat/Gedung...">
+                                    <input type="text" id="add_search_input" class="form-control border-end-0"
+                                        placeholder="Cari Alamat/Gedung...">
                                     <button class="btn btn-outline-info" type="button" id="add_search_btn">
                                         <i class="bx bx-search"></i>
                                     </button>
@@ -224,7 +227,8 @@
                             <div class="col-md-6 border-end pr-4">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold small text-muted">NAMA LOKASI</label>
-                                    <input type="text" name="nama_lokasi" id="edit_nama" class="form-control" required>
+                                    <input type="text" name="nama_lokasi" id="edit_nama" class="form-control"
+                                        required>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
@@ -250,7 +254,7 @@
                                     <label class="form-label fw-bold small text-muted">ALAMAT LENGKAP</label>
                                     <textarea name="alamat" id="edit_alamat" class="form-control" rows="6"></textarea>
                                 </div>
-                                
+
                                 <input type="hidden" name="latitude" id="edit_lat">
                                 <input type="hidden" name="longitude" id="edit_lng">
                             </div>
@@ -258,7 +262,8 @@
                             <!-- Right: Map -->
                             <div class="col-md-6 position-relative">
                                 <div class="input-group search-map-box shadow-none">
-                                    <input type="text" id="edit_search_input" class="form-control border-end-0" placeholder="Cari Alamat/Gedung...">
+                                    <input type="text" id="edit_search_input" class="form-control border-end-0"
+                                        placeholder="Cari Alamat/Gedung...">
                                     <button class="btn btn-outline-info" type="button" id="edit_search_btn">
                                         <i class="bx bx-search"></i>
                                     </button>
@@ -268,8 +273,8 @@
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-between p-3">
-                        <button type="button" class="btn btn-kembali px-4" data-bs-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-simpan px-5">Simpan Perubahan</button>
+                        <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">Kembali</button>
+                        <button type="submit" class="btn btn-primary px-5">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
@@ -295,8 +300,10 @@
                         attribution: '&copy; OpenStreetMap contributors'
                     }).addTo(addMap);
 
-                    addMarker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(addMap);
-                    
+                    addMarker = L.marker([defaultLat, defaultLng], {
+                        draggable: true
+                    }).addTo(addMap);
+
                     $('#add_lat').val(defaultLat);
                     $('#add_lng').val(defaultLng);
 
@@ -307,7 +314,9 @@
                         reverseGeocode(position.lat, position.lng, '#add_alamat_text');
                     });
                 }
-                setTimeout(() => { addMap.invalidateSize(); }, 500);
+                setTimeout(() => {
+                    addMap.invalidateSize();
+                }, 500);
             }
 
             // Initialize Edit Map
@@ -318,7 +327,9 @@
                         attribution: '&copy; OpenStreetMap contributors'
                     }).addTo(editMap);
 
-                    editMarker = L.marker([lat, lng], { draggable: true }).addTo(editMap);
+                    editMarker = L.marker([lat, lng], {
+                        draggable: true
+                    }).addTo(editMap);
 
                     editMarker.on('dragend', function(e) {
                         const position = editMarker.getLatLng();
@@ -330,7 +341,9 @@
                     editMap.setView([lat, lng], 13);
                     editMarker.setLatLng([lat, lng]);
                 }
-                setTimeout(() => { editMap.invalidateSize(); }, 500);
+                setTimeout(() => {
+                    editMap.invalidateSize();
+                }, 500);
             }
 
             // Reverse Geocode (Address Lookup)
@@ -356,10 +369,10 @@
                             const lat = data[0].lat;
                             const lon = data[0].lon;
                             const zoom = 15;
-                            
+
                             mapObj.setView([lat, lon], zoom);
                             markerObj.setLatLng([lat, lon]);
-                            
+
                             $(latInput).val(lat);
                             $(lngInput).val(lon);
                             $(addrInput).val(data[0].display_name);
@@ -370,8 +383,10 @@
             }
 
             // Search Buttons
-            $('#add_search_btn').on('click', () => searchAddress('#add_search_input', addMap, addMarker, '#add_lat', '#add_lng', '#add_alamat_text'));
-            $('#edit_search_btn').on('click', () => searchAddress('#edit_search_input', editMap, editMarker, '#edit_lat', '#edit_lng', '#edit_alamat'));
+            $('#add_search_btn').on('click', () => searchAddress('#add_search_input', addMap, addMarker, '#add_lat',
+                '#add_lng', '#add_alamat_text'));
+            $('#edit_search_btn').on('click', () => searchAddress('#edit_search_input', editMap, editMarker,
+                '#edit_lat', '#edit_lng', '#edit_alamat'));
 
             // Handlers for Map Initialization
             $('#addLokasiModal').on('shown.bs.modal', function() {
@@ -382,7 +397,7 @@
                 const id = $(this).data('id');
                 const lat = parseFloat($(this).data('lat')) || defaultLat;
                 const lng = parseFloat($(this).data('lng')) || defaultLng;
-                
+
                 $('#edit_nama').val($(this).data('nama'));
                 $('#edit_alamat').val($(this).data('alamat'));
                 $('#edit_lat').val(lat);
@@ -392,8 +407,10 @@
 
                 $('#editLokasiForm').attr('action', `/Lokasi-Absensi/${id}`);
                 $('#editLokasiModal').modal('show');
-                
-                setTimeout(() => { initEditMap(lat, lng); }, 200);
+
+                setTimeout(() => {
+                    initEditMap(lat, lng);
+                }, 200);
             });
 
             // AJAX Update Settings
@@ -454,13 +471,13 @@
             });
 
             // Flash Messages
-            @if(session('success'))
-                Swal.fire({ 
-                    icon: 'success', 
-                    title: 'Berhasil!', 
-                    text: "{{ session('success') }}", 
-                    timer: 2000, 
-                    showConfirmButton: false 
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 2000,
+                    showConfirmButton: false
                 });
             @endif
         });
