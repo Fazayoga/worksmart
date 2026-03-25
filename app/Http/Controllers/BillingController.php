@@ -22,7 +22,14 @@ class BillingController extends Controller
         // 2. Check if trial has ended and if a bill for this month should be generated
         $this->checkAndGenerateBill($perusahaan);
 
-        // 2. Fetch all billings
+        // 3. Auto-expire unpaid bills older than 1 day
+        Billing::where('perusahaan_id', $perusahaan->id)
+            ->where('payment_status', 'unpaid')
+            ->where('status', 'active')
+            ->where('created_at', '<', now()->subDay())
+            ->update(['status' => 'expired']);
+
+        // 4. Fetch all billings
         $billings = Billing::where('perusahaan_id', $perusahaan->id)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -30,38 +37,185 @@ class BillingController extends Controller
         return view('billing.index', compact('billings', 'perusahaan'));
     }
 
+    public function buySaldo(Request $request)
+    {
+        $perusahaan = Auth::user()->perusahaan;
+        $valueStr = $request->input('saldo'); // e.g., "Rp 100.000" or raw value
+        
+        // Clean numeric value: capture only the first Rp value
+        if (preg_match('/Rp\.?([\d.]+)/i', $valueStr, $matches)) {
+            $nominal = (int) str_replace('.', '', $matches[1]);
+        } else {
+            $nominal = (int) preg_replace('/[^0-9]/', '', $valueStr);
+        }
+        
+        if ($nominal <= 0) return back()->with('error', 'Pilih nominal saldo yang valid.');
+
+        // Simple bonus logic based on images
+        $bonus = 0;
+        if ($nominal >= 500000) {
+            if ($nominal == 500000) $bonus = 200000;
+            elseif ($nominal == 750000) $bonus = 250000;
+            elseif ($nominal == 1000000) $bonus = 300000;
+            elseif ($nominal >= 5000000) $bonus = 1000000;
+            else $bonus = $nominal * 0.3; // fallback 30%
+        }
+
+        Billing::create([
+            'perusahaan_id' => $perusahaan->id,
+            'nomor_transaksi' => 'TOPUP-' . strtoupper(Str::random(10)),
+            'tipe' => 'Topup Saldo Utama',
+            'nominal' => $nominal,
+            'keterangan' => "Topup Saldo Rp " . number_format($nominal, 0, ',', '.') . ($bonus > 0 ? " + Bonus Rp " . number_format($bonus, 0, ',', '.') : ""),
+            'nominal_total' => $nominal, // Usually price after discount, but for now same as nominal
+            'status' => 'active',
+            'payment_status' => 'unpaid',
+            'metadata' => json_encode(['bonus' => $bonus])
+        ]);
+
+        return back()->with('success', 'Pesanan saldo berhasil dibuat. Silakan lakukan transfer sesuai petunjuk di atas.');
+    }
+
+    public function buyPackage(Request $request)
+    {
+        $perusahaan = Auth::user()->perusahaan;
+        $packageStr = $request->input('package');
+        
+        // Clean numeric value from string like "Paket 100 Pegawai - Rp 1.900.000"
+        $parts = explode(' - Rp ', $packageStr);
+        $nominal = count($parts) > 1 ? (int) preg_replace('/[^0-9]/', '', $parts[1]) : 0;
+        
+        if ($nominal <= 0) return back()->with('error', 'Pilih paket yang valid.');
+
+        Billing::create([
+            'perusahaan_id' => $perusahaan->id,
+            'nomor_transaksi' => 'PKG-' . strtoupper(Str::random(10)),
+            'tipe' => 'Pembelian Paket Tahunan',
+            'nominal' => $nominal,
+            'keterangan' => "Pembelian " . $parts[0],
+            'nominal_total' => $nominal,
+            'status' => 'active',
+            'payment_status' => 'unpaid',
+        ]);
+
+        return back()->with('success', 'Pesanan paket berhasil dibuat. Silakan lakukan transfer sesuai petunjuk di atas.');
+    }
+
+    public function buySaldoGaji(Request $request)
+    {
+        $perusahaan = Auth::user()->perusahaan;
+        $valueStr = $request->input('saldo_gaji');
+        
+        if (str_contains($valueStr, 'Costume')) {
+            return back()->with('error', 'Fitur Custom Saldo Gaji akan segera hadir. Silakan pilih nominal yang tersedia.');
+        }
+
+        // Clean numeric value: capture first Rp value
+        if (preg_match('/Rp\.?([\d.]+)/i', $valueStr, $matches)) {
+            $nominal = (int) str_replace('.', '', $matches[1]);
+        } else {
+            $nominal = (int) preg_replace('/[^0-9]/', '', $valueStr);
+        }
+
+        if ($nominal <= 0) return back()->with('error', 'Pilih nominal saldo gaji yang valid.');
+
+        Billing::create([
+            'perusahaan_id' => $perusahaan->id,
+            'nomor_transaksi' => 'SAL gaji-' . strtoupper(Str::random(10)),
+            'tipe' => 'Topup Saldo Gaji',
+            'nominal' => $nominal,
+            'keterangan' => "Topup Saldo Gaji Rp " . number_format($nominal, 0, ',', '.'),
+            'nominal_total' => $nominal,
+            'status' => 'active',
+            'payment_status' => 'unpaid',
+        ]);
+
+        return back()->with('success', 'Pesanan saldo gaji berhasil dibuat. Silakan lakukan transfer sesuai petunjuk di atas.');
+    }
+
+    public function pay(Request $request, $id)
+    {
+        $billing = Billing::findOrFail($id);
+        if ($billing->payment_status == 'paid') return back()->with('error', 'Tagihan ini sudah terbayar.');
+
+        $request->validate([
+            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $perusahaan = $billing->perusahaan;
+
+        // Handle File Upload
+        if ($request->hasFile('bukti_pembayaran')) {
+            $file = $request->file('bukti_pembayaran');
+            $filename = 'bukti_' . $billing->nomor_transaksi . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('bukti_pembayaran', $filename, 'public');
+            $billing->bukti_pembayaran = 'bukti_pembayaran/' . $filename;
+        }
+
+        // Update balances based on type
+        if ($billing->tipe == 'Topup Saldo Utama') {
+            $perusahaan->increment('saldo_utama', $billing->nominal);
+            $metadata = json_decode($billing->metadata, true);
+            if (isset($metadata['bonus'])) {
+                $perusahaan->increment('saldo_bonus', $metadata['bonus']);
+            }
+        } elseif ($billing->tipe == 'Topup Saldo Gaji') {
+            $perusahaan->increment('saldo_gaji', $billing->nominal);
+        } elseif ($billing->tipe == 'Pembelian Paket Tahunan') {
+            // Logic for extending subscription could go here
+            $perusahaan->update([
+                'subscription_status' => 'active',
+                'trial_ends_at' => Carbon::parse($perusahaan->trial_ends_at ?? now())->addYear()
+            ]);
+        }
+
+        $billing->payment_status = 'paid';
+        $billing->tanggal_bayar = now();
+        $billing->save();
+
+        return back()->with('success', 'Pembayaran berhasil dikonfirmasi. Saldo/Paket Anda telah diperbarui.');
+    }
+
     private function checkAndGenerateBill(Perusahaan $perusahaan)
     {
-        // Only generate bill if trial is over
+        // Only generate bill if trial is over OR subscription is active but needs renewal
         if ($perusahaan->trial_ends_at && now()->greaterThan($perusahaan->trial_ends_at)) {
             
-            // Check if there's already a bill for the current period (monthly)
-            // For simplicity, we check if a bill was created in the last 30 days
-            $latestBill = Billing::where('perusahaan_id', $perusahaan->id)
-                ->where('created_at', '>', now()->subMonth())
+            // Check if there's already an UNPAID bill for the current period
+            $unpaidBill = Billing::where('perusahaan_id', $perusahaan->id)
+                ->where('tipe', 'Tagihan Bulanan')
+                ->where('payment_status', 'unpaid')
                 ->first();
 
-            if (!$latestBill) {
-                // Generate new bill
-                $employeeCount = $perusahaan->users()->count();
-                $pricePerEmployee = 5000;
-                $totalNominal = $employeeCount * $pricePerEmployee;
+            if (!$unpaidBill) {
+                // Generate new bill if no unpaid bill exists for the current month
+                $latestPaidBill = Billing::where('perusahaan_id', $perusahaan->id)
+                    ->where('tipe', 'Tagihan Bulanan')
+                    ->where('payment_status', 'paid')
+                    ->where('created_at', '>', now()->subDays(25))
+                    ->first();
 
-                $startDate = now();
-                $endDate = now()->addMonth();
+                if (!$latestPaidBill) {
+                    $employeeCount = $perusahaan->users()->count();
+                    $pricePerEmployee = 5000;
+                    $totalNominal = $employeeCount * $pricePerEmployee;
 
-                Billing::create([
-                    'perusahaan_id' => $perusahaan->id,
-                    'nomor_transaksi' => '#' . now()->format('dmY') . strtoupper(Str::random(10)),
-                    'tipe' => 'Tagihan Bulanan',
-                    'nominal' => $pricePerEmployee,
-                    'keterangan' => "Tagihan Periode " . $startDate->format('d M Y') . " s/d " . $endDate->format('d M Y') . ", Rp " . number_format($pricePerEmployee, 0, ',', '.') . " x " . $employeeCount . " Pegawai",
-                    'nominal_total' => $totalNominal,
-                    'tanggal_mulai' => $startDate,
-                    'tanggal_selesai' => $endDate,
-                    'status' => 'active',
-                    'payment_status' => 'unpaid',
-                ]);
+                    $startDate = now();
+                    $endDate = now()->addMonth();
+
+                    Billing::create([
+                        'perusahaan_id' => $perusahaan->id,
+                        'nomor_transaksi' => '#' . now()->format('dmY') . strtoupper(Str::random(10)),
+                        'tipe' => 'Tagihan Bulanan',
+                        'nominal' => $pricePerEmployee,
+                        'keterangan' => "Tagihan Periode " . $startDate->format('d M Y') . " s/d " . $endDate->format('d M Y') . ", Rp " . number_format($pricePerEmployee, 0, ',', '.') . " x " . $employeeCount . " Pegawai",
+                        'nominal_total' => $totalNominal,
+                        'tanggal_mulai' => $startDate,
+                        'tanggal_selesai' => $endDate,
+                        'status' => 'active',
+                        'payment_status' => 'unpaid',
+                    ]);
+                }
             }
         }
     }

@@ -27,6 +27,7 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\JabatanAksesController;
 use App\Http\Controllers\LokasiAbsensiController;
 use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\PerusahaanController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -147,9 +148,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('Jam-Kerja/{id}', [ShiftController::class, 'destroy'])->name('Jam-Kerja.destroy');
     Route::get('Jam-Kerja/search-staff', [ShiftController::class, 'searchStaff'])->name('Jam-Kerja.search-staff');
 
-    Route::get('Perusahaan', function () {
-        return view('admin.setting.perusahaan');
-    })->name('Perusahaan');
+    Route::get('Perusahaan', [PerusahaanController::class, 'index'])->name('Perusahaan');
+    Route::post('Perusahaan', [PerusahaanController::class, 'update'])->name('Perusahaan.update');
 
     Route::get('Potongan-Tunjangan', function () {
         return view('admin.setting.potongan-tunjangan');
@@ -164,6 +164,10 @@ Route::middleware(['auth'])->group(function () {
     })->name('Riwayat-Login');
 
     Route::get('billing', [BillingController::class, 'index'])->name('Billing');
+    Route::post('billing/buy-saldo', [BillingController::class, 'buySaldo'])->name('billing.buy-saldo');
+    Route::post('billing/buy-package', [BillingController::class, 'buyPackage'])->name('billing.buy-package');
+    Route::post('billing/buy-saldo-gaji', [BillingController::class, 'buySaldoGaji'])->name('billing.buy-saldo-gaji');
+    Route::post('billing/pay/{id}', [BillingController::class, 'pay'])->name('billing.pay');
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');

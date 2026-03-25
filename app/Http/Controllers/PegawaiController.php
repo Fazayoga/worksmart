@@ -46,14 +46,14 @@ class PegawaiController extends Controller
                 });
             } else {
                 // Default search (search all relevant fields)
-                $pegawaiQuery->where(function($q) use ($query, $pegawaiQuery) {
+                $pegawaiQuery->where(function($q) use ($query) {
                     $q->whereHas('user', function($sq) use ($query) {
                         $sq->where('name', 'like', "%{$query}%");
                     })->orWhereHas('divisi', function($sq) use ($query) {
                         $sq->where('nama_divisi', 'like', "%{$query}%");
                     })->orWhereHas('jabatan', function($sq) use ($query) {
                         $sq->where('nama_jabatan', 'like', "%{$query}%");
-                    })->orWhere($pegawaiQuery->qualifyColumn('nik'), 'like', "%{$query}%");
+                    })->orWhere('nik', 'like', "%{$query}%");
                 });
             }
         }

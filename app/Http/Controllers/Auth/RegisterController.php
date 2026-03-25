@@ -34,8 +34,10 @@ class RegisterController extends Controller
             // 1. Create Perusahaan
             $perusahaan = Perusahaan::create([
                 'nama_perusahaan' => $request->company_name,
-                'email' => $request->email, // Optional, can use user email
+                'email' => $request->email,
                 'no_telp' => $request->phone,
+                'no_wa' => $request->mobile,
+                'kabupaten' => $request->city,
                 'status' => 'active',
                 'trial_ends_at' => now()->addDays(15),
                 'subscription_status' => 'trial'

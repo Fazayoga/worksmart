@@ -21,7 +21,9 @@ class Billing extends Model
         'tanggal_bayar',
         'status',
         'payment_status',
-        'file_invoice'
+        'file_invoice',
+        'metadata',
+        'bukti_pembayaran'
     ];
 
     protected $casts = [

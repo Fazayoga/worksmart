@@ -33,8 +33,26 @@
 
     </div>
 
-    <form action="#" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('Perusahaan.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible mb-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible mb-4" role="alert">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <div class="card shadow-sm">
             <div class="card-body">
@@ -45,40 +63,32 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Nama Perusahaan</label>
-                        <input type="text" class="form-control" value="TK TADIKA MESRA">
+                        <input type="text" name="nama_perusahaan" class="form-control" value="{{ $perusahaan->nama_perusahaan }}">
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Email Perusahaan</label>
-                        <input type="email" class="form-control" value="cekgbesar.id@gmail.com">
+                        <input type="email" name="email" class="form-control" value="{{ $perusahaan->email }}">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Provinsi</label>
-                        <select class="form-select">
-                            <option selected>DI YOGYAKARTA</option>
-                        </select>
+                        <input type="text" name="provinsi" class="form-control" value="{{ $perusahaan->provinsi }}" placeholder="Contoh: DI Yogyakarta">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Kabupaten</label>
-                        <select class="form-select">
-                            <option selected>SLEMAN</option>
-                        </select>
+                        <input type="text" name="kabupaten" class="form-control" value="{{ $perusahaan->kabupaten }}" placeholder="Contoh: Sleman">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Kecamatan</label>
-                        <select class="form-select">
-                            <option selected>Pilih Kecamatan</option>
-                        </select>
+                        <input type="text" name="kecamatan" class="form-control" value="{{ $perusahaan->kecamatan }}" placeholder="Contoh: Ngaglik">
                     </div>
 
                     <div class="col-md-12">
                         <label class="form-label">Alamat Perusahaan</label>
-                        <textarea class="form-control" rows="2">
-                            Jl. Paluransih No 152B Sinduharjo Ngaglik Sleman Yogyakarta
-                        </textarea>
+                        <textarea name="alamat" class="form-control" rows="2">{{ $perusahaan->alamat }}</textarea>
                     </div>
                 </div>
 
@@ -90,35 +100,37 @@
                 <div class="row g-2">
                     <div class="col-md-6">
                         <label class="form-label">Telepon Perusahaan</label>
-                        <input type="text" class="form-control" value="0818808">
+                        <input type="text" name="no_telp" class="form-control" value="{{ $perusahaan->no_telp }}">
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">No. HP / WhatsApp</label>
-                        <input type="text" class="form-control" value="0818808">
+                        <input type="text" name="no_wa" class="form-control" value="{{ $perusahaan->no_wa }}">
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Bidang Industri</label>
-                        <input type="text" class="form-control" value="Sekolah Kemashalatan Umat">
+                        <input type="text" name="bidang_industri" class="form-control" value="{{ $perusahaan->bidang_industri }}">
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Website Perusahaan</label>
-                        <input type="text" class="form-control" value="www.tadikamesra.co.id">
+                        <input type="text" name="website" class="form-control" value="{{ $perusahaan->website }}">
                     </div>
 
                     <div class="col-md-12">
                         <label class="form-label">Logo / Kartu Perusahaan</label>
 
                         <div class="d-flex align-items-center gap-3">
-                            <!-- PREVIEW (AWALNYA DISEMBUNYIKAN) -->
-                            <img id="previewLogo" class="border rounded d-none"
-                                style="width:90px;height:90px;object-fit:contain" alt="Preview Logo">
+                            <!-- PREVIEW -->
+                            <img id="previewLogo" class="border rounded {{ $perusahaan->logo ? '' : 'd-none' }}"
+                                style="width:90px;height:90px;object-fit:contain" 
+                                src="{{ $perusahaan->logo ? asset('storage/' . $perusahaan->logo) : '#' }}" 
+                                alt="Preview Logo">
 
                             <!-- FILE INPUT -->
                             <div class="flex-grow-1">
-                                <input type="file" class="form-control" accept="image/png, image/jpeg"
+                                <input type="file" name="logo" class="form-control" accept="image/png, image/jpeg"
                                     onchange="previewImage(this)">
                                 <small class="text-muted">
                                     PNG / JPG, maksimal 2MB
@@ -133,11 +145,11 @@
                 {{-- DESKRIPSI --}}
                 <h6 class="fw-semibold mb-3">Deskripsi Perusahaan</h6>
 
-                <textarea class="form-control" rows="6" placeholder="Deskripsikan perusahaan secara singkat..."></textarea>
+                <textarea name="deskripsi" class="form-control" rows="6" placeholder="Deskripsikan perusahaan secara singkat...">{{ $perusahaan->deskripsi }}</textarea>
 
                 {{-- ACTION --}}
                 <div class="d-flex justify-content-end mt-4">
-                    <button class="btn btn-success">
+                    <button type="submit" class="btn btn-success">
                         <i class="bx bx-save"></i> Simpan
                     </button>
                 </div>

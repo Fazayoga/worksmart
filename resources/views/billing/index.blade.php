@@ -16,6 +16,30 @@
         $totalTagihan = $jumlahPegawai * $biayaPerPegawai;
     @endphp
     <div class="row g-4 mb-4">
+        <!-- Bank Info Card -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body d-flex align-items-center justify-content-between p-4">
+                    <div>
+                        <h4 class="mb-1 text-white fw-bold">Petunjuk Pembayaran Manual</h4>
+                        <p class="mb-1 opacity-75 text-sm">Silakan lakukan transfer ke salah satu rekening di bawah ini sesuai nominal tagihan.</p>
+                        <p class="mb-0 opacity-100 fw-semibold text-sm">Gunakan Nomor Transaksi sebagai berita transfer untuk mempercepat pengecekan.</p>
+                    </div>
+                    <div class="d-flex gap-4">
+                        <div class="text-end">
+                            <small class="d-block opacity-75">Bank BCA</small>
+                            <span class="fw-bold">123-456-7890</span>
+                            <small class="d-block opacity-75">A/N PT WorkSmart Indonesia</small>
+                        </div>
+                        <div class="text-end">
+                            <small class="d-block opacity-75">Bank Mandiri</small>
+                            <span class="fw-bold">098-765-4321</span>
+                            <small class="d-block opacity-75">A/N PT WorkSmart Indonesia</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <div class="col-lg-8">
@@ -82,7 +106,7 @@
                                 </div>
                                 <div>
                                     <small class="text-muted d-block">Saldo Utama</small>
-                                    <h5 class="mb-0 fw-semibold">Rp 5.048.663,-</h5>
+                                    <h5 class="mb-0 fw-semibold">Rp {{ number_format($perusahaan->saldo_utama, 0, ',', '.') }},-</h5>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +123,7 @@
                                 </div>
                                 <div>
                                     <small class="text-muted d-block">Saldo Gaji</small>
-                                    <h5 class="mb-0 fw-semibold">0</h5>
+                                    <h5 class="mb-0 fw-semibold">Rp {{ number_format($perusahaan->saldo_gaji, 0, ',', '.') }},-</h5>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +140,7 @@
                                 </div>
                                 <div>
                                     <small class="text-muted d-block">Saldo Bonus</small>
-                                    <h5 class="mb-0 fw-semibold">Rp 4.975.333,-</h5>
+                                    <h5 class="mb-0 fw-semibold">Rp {{ number_format($perusahaan->saldo_bonus, 0, ',', '.') }},-</h5>
                                 </div>
                             </div>
                         </div>
@@ -132,38 +156,69 @@
                 <div class="card-body d-flex flex-column gap-3 justify-content-center">
 
                     <!-- Saldo -->
-                    <div class="d-flex flex-column flex-sm-row gap-2">
-                        <select class="form-select">
-                            <option>-- Pilih Saldo --</option>
-                            <option>Rp 100.000</option>
-                            <option>Rp 500.000</option>
+                    <form action="{{ route('billing.buy-saldo') }}" method="POST" class="m-0 d-flex flex-column flex-sm-row gap-2">
+                        @csrf
+                        <select name="saldo" class="form-select" required>
+                            <option value="">-- Pilih Saldo --</option>
+                            <option>Rp.50.000,-</option>
+                            <option>Rp.100.000,-</option>
+                            <option>Rp.150.000,-</option>
+                            <option>Rp.200.000,-</option>
+                            <option>Rp.300.000,-</option>
+                            <option>Rp.500.000,- Bonus Rp.200.000,- Promo Diskon 35%</option>
+                            <option>Rp.750.000,- Bonus Rp.250.000,- Promo Diskon 35%</option>
+                            <option>Rp.1.000.000,- Bonus Rp.300.000,- Promo Diskon 35%</option>
+                            <option>Rp.1.500.000,- Bonus Rp.500.000,- Promo Diskon 35%</option>
+                            <option>Rp.1.750.000,- Bonus Rp.500.000,- Promo Diskon 35%</option>
+                            <option>Rp.1.850.000,- Bonus Rp.500.000,- Promo Diskon 35%</option>
+                            <option>Rp.2.000.000,- Bonus Rp.500.000,- Promo Diskon 35%</option>
+                            <option>Rp.2.500.000,- Bonus Rp.500.000,- Promo Diskon 35%</option>
+                            <option>Rp.5.000.000,- Bonus Rp.1.000.000,- Promo Diskon 35%</option>
                         </select>
-                        <button class="btn btn-primary w-100 w-sm-auto">
+                        <button type="submit" class="btn btn-primary w-100 w-sm-auto">
                             Beli Saldo
                         </button>
-                    </div>
+                    </form>
+
 
                     <!-- Paket -->
-                    <div class="d-flex flex-column flex-sm-row gap-2">
-                        <select class="form-select">
-                            <option>-- Pilih Paket Tahunan --</option>
-                            <option>Paket 1 Tahun</option>
+                    <form action="{{ route('billing.buy-package') }}" method="POST" class="m-0 d-flex flex-column flex-sm-row gap-2">
+                        @csrf
+                        <select name="package" class="form-select" required>
+                            <option value="">-- Pilih Paket Tahunan --</option>
+                            <option>Paket Berlangganan 100 Pegawai - Rp 1.900.000</option>
+                            <option>Paket Berlangganan 300 Pegawai - Rp 3.750.000</option>
+                            <option>Paket Berlangganan 500 Pegawai - Rp 5.750.000</option>
+                            <option>Paket Berlangganan 700 Pegawai - Rp 7.500.000</option>
+                            <option>Paket Berlangganan 1000 Pegawai - Rp 9.250.000</option>
                         </select>
-                        <button class="btn btn-primary w-100 w-sm-auto">
+                        <button type="submit" class="btn btn-primary w-100 w-sm-auto">
                             Beli Paket
                         </button>
-                    </div>
+                    </form>
 
                     <!-- Saldo Gaji -->
-                    <div class="d-flex flex-column flex-sm-row gap-2">
-                        <select class="form-select">
-                            <option>-- Pilih Saldo Gaji --</option>
-                            <option>Rp 1.000.000</option>
+                    <form action="{{ route('billing.buy-saldo-gaji') }}" method="POST" class="m-0 d-flex flex-column flex-sm-row gap-2">
+                        @csrf
+                        <select name="saldo_gaji" class="form-select" required>
+                            <option value="">-- Pilih Saldo Gaji --</option>
+                            <option>Rp.5.000.000,-</option>
+                            <option>Rp.7.500.000,-</option>
+                            <option>Rp.10.000.000,-</option>
+                            <option>Rp.20.000.000,-</option>
+                            <option>Rp.30.000.000,-</option>
+                            <option>Rp.40.000.000,-</option>
+                            <option>Rp.50.000.000,-</option>
+                            <option>Rp.60.000.000,-</option>
+                            <option>Rp.70.000.000,-</option>
+                            <option>Rp.75.000.000,-</option>
+                            <option>Rp.100.000.000,-</option>
+                            <option>--- Costume Saldo Gaji ---</option>
                         </select>
-                        <button class="btn btn-primary w-100 w-sm-auto">
+                        <button type="submit" class="btn btn-primary w-100 w-sm-auto">
                             Beli Saldo Gaji
                         </button>
-                    </div>
+                    </form>
 
                 </div>
             </div>
@@ -211,8 +266,28 @@
                             <td class="text-center">
                                 @if ($bill->payment_status == 'paid')
                                     <span class="badge bg-greenkit">Terbayar</span>
+                                    @if ($bill->bukti_pembayaran)
+                                        <br>
+                                        <a href="{{ asset('storage/' . $bill->bukti_pembayaran) }}" target="_blank" class="text-xs text-primary mt-1 d-inline-block">
+                                            <i class="bx bx-image-alt"></i> Lihat Bukti
+                                        </a>
+                                    @endif
                                 @else
-                                    <span class="badge bg-danger">Belum Bayar</span>
+                                    @if ($bill->status == 'expired')
+                                        <span class="badge bg-secondary">Kedaluwarsa</span>
+                                    @else
+                                        <button type="button" class="btn btn-danger btn-sm open-pay-modal" 
+                                                data-id="{{ $bill->id }}" 
+                                                data-no="{{ $bill->nomor_transaksi }}"
+                                                data-nominal="Rp {{ number_format($bill->nominal_total, 0, ',', '.') }},-">
+                                            Bayar Sekarang
+                                        </button>
+                                        <div class="mt-1">
+                                            <small class="text-danger" style="font-size: 0.70rem;">
+                                                Batas: {{ $bill->created_at->addDay()->format('d M y H:i') }}
+                                            </small>
+                                        </div>
+                                    @endif
                                 @endif
                             </td>
                             <td class="text-center">
@@ -245,22 +320,83 @@
         </div>
     </div>
 
+    <!-- Payment Modal -->
+    <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-start">
+                <div class="modal-header">
+                    <h5 class="modal-title">Konfirmasi Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="payForm" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="alert alert-info border-0 shadow-none mb-4">
+                            <small>
+                                <i class="bx bx-info-circle me-1"></i>
+                                Silakan upload bukti transfer bank untuk pesanan: <strong id="modal-no-transaksi"></strong> 
+                                dengan total <strong id="modal-nominal"></strong>
+                            </small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Upload Bukti Transfer</label>
+                            <input type="file" name="bukti_pembayaran" class="form-control" accept="image/*" required>
+                            <small class="text-muted">Format: JPG, PNG, JPEG (Max 2MB)</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Konfirmasi Sekarang</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Success/Error Alerts
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                });
+            @endif
+
             const toggle = document.getElementById("desktopMenuToggle");
-            const icon = toggle.querySelector("i");
+            if (toggle) {
+                const icon = toggle.querySelector("i");
+                toggle.addEventListener("click", function() {
+                    document.body.classList.toggle("layout-menu-collapsed");
+                    icon.classList.toggle("bx-chevron-left");
+                    icon.classList.toggle("bx-chevron-right");
+                });
+            }
 
-            toggle.addEventListener("click", function() {
-                document.body.classList.toggle("layout-menu-collapsed");
-
-                icon.classList.toggle("bx-chevron-left");
-                icon.classList.toggle("bx-chevron-right");
+            // Pay Modal Handler (using delegation for robustness)
+            $(document).on('click', '.open-pay-modal', function() {
+                const id = $(this).data('id');
+                const no = $(this).data('no');
+                const nominal = $(this).data('nominal');
+                
+                $('#modal-no-transaksi').text(no);
+                $('#modal-nominal').text(nominal);
+                $('#payForm').attr('action', `/billing/pay/${id}`);
+                
+                const myModal = new bootstrap.Modal(document.getElementById('payModal'));
+                myModal.show();
             });
-        });
-        document.getElementById("desktopMenuToggle").addEventListener("click", function() {
-            setTimeout(() => {
-                window.dispatchEvent(new Event('resize'));
-            }, 300);
         });
     </script>
 @endsection
