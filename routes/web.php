@@ -166,8 +166,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('billing', [BillingController::class, 'index'])->name('Billing');
     Route::post('billing/buy-saldo', [BillingController::class, 'buySaldo'])->name('billing.buy-saldo');
     Route::post('billing/buy-package', [BillingController::class, 'buyPackage'])->name('billing.buy-package');
-    Route::post('billing/buy-saldo-gaji', [BillingController::class, 'buySaldoGaji'])->name('billing.buy-saldo-gaji');
-    Route::post('billing/pay/{id}', [BillingController::class, 'pay'])->name('billing.pay');
+    Route::post('/billing/topup-saldo-gaji', [BillingController::class, 'buySaldoGaji'])->name('billing.buy-saldo-gaji');
+    Route::post('/billing/pay/{id}', [BillingController::class, 'pay'])->name('billing.pay');
+    Route::get('/billing/invoice/{id}', [BillingController::class, 'invoice'])->name('billing.invoice');
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');

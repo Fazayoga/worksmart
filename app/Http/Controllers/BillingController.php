@@ -176,6 +176,19 @@ class BillingController extends Controller
         return back()->with('success', 'Pembayaran berhasil dikonfirmasi. Saldo/Paket Anda telah diperbarui.');
     }
 
+    public function invoice($id)
+    {
+        $billing = Billing::findOrFail($id);
+        
+        // Ensure the invoice belongs to the current user's company
+        $perusahaan = Auth::user()->perusahaan;
+        if ($billing->perusahaan_id !== $perusahaan->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('billing.invoice', compact('billing', 'perusahaan'));
+    }
+
     private function checkAndGenerateBill(Perusahaan $perusahaan)
     {
         // Only generate bill if trial is over OR subscription is active but needs renewal

@@ -293,13 +293,14 @@
                             <td class="text-center">
                                 @if ($bill->file_invoice)
                                     <a href="{{ asset('storage/' . $bill->file_invoice) }}" class="btn btn-light btn-sm"
-                                        target="_blank">
+                                        target="_blank" title="Download Invoice">
                                         <i class='bx bxs-file-pdf'></i>
                                     </a>
                                 @else
-                                    <button class="btn btn-light btn-sm disabled">
+                                    <a href="{{ route('billing.invoice', $bill->id) }}" class="btn btn-light btn-sm"
+                                        target="_blank" title="Cetak / Download Invoice">
                                         <i class='bx bxs-file-pdf'></i>
-                                    </button>
+                                    </a>
                                 @endif
                             </td>
                         </tr>
