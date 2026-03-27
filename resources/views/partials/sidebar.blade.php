@@ -119,6 +119,158 @@
         </div>
     </div>
     <ul class="menu-inner py-1">
+        @if ($user->status_dev === 'superadmin')
+            <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-smile"></i>
+                    <div class="text-truncate">Dashboard</div>
+                </a>
+            </li>
+            <li class="menu-item {{ request()->routeIs('superadmin.user.*') ? 'active' : '' }}">
+                <a href="{{ route('superadmin.user.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-user"></i>
+                    <div class="text-truncate">User</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-trophy"></i>
+                    <div class="text-truncate">Rangking Poin</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-check-square"></i>
+                    <div class="text-truncate">Absen</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-line-chart"></i>
+                    <div class="text-truncate">Statistik</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-building"></i>
+                    <div class="text-truncate">Perusahaan Trial</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-building-house"></i>
+                    <div class="text-truncate">Perusahaan</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-plug"></i>
+                    <div class="text-truncate">Perusahaan Plugin</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-dollar-circle"></i>
+                    <div class="text-truncate">Billing</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-gift"></i>
+                    <div class="text-truncate">Reward Poin</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-wallet"></i>
+                    <div class="text-truncate">Billing (Gaji)</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-send"></i>
+                    <div class="text-truncate">Kirim Gaji</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-receipt"></i>
+                    <div class="text-truncate">Tiket</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-history"></i>
+                    <div class="text-truncate">Riwayat Pelanggan</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-share-alt"></i>
+                    <div class="text-truncate">Afiliasi</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-map-pin"></i>
+                    <div class="text-truncate">App Fake GPS</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-purchase-tag-alt"></i>
+                    <div class="text-truncate">Edit Harga Paket</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-broadcast"></i>
+                    <div class="text-truncate">Broadcast</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-transfer"></i>
+                    <div class="text-truncate">Riwayat Tukar Poin</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-calendar-edit"></i>
+                    <div class="text-truncate">Setting Periode Aktif</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-shopping-bag"></i>
+                    <div class="text-truncate">Produk Belanja</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-filter-alt"></i>
+                    <div class="text-truncate">Filter Promo</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-data"></i>
+                    <div class="text-truncate">Data Corn</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-x-circle"></i>
+                    <div class="text-truncate">Data Terminate</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-star"></i>
+                    <div class="text-truncate">Promo</div>
+                </a>
+            </li>
+        @else
         <!-- Dashboards -->
         @if ($canAccess('dashboard'))
             <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -376,6 +528,7 @@
                     <div class="text-truncate">Profile</div>
                 </a>
             </li>
+        @endif
         @endif
     </ul>
 </aside>

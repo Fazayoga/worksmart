@@ -41,8 +41,15 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
+        if (\Illuminate\Support\Facades\Auth::user()->status_dev === 'superadmin') {
+            return app(\App\Http\Controllers\SuperadminController::class)->dashboard();
+        }
         return view('dashboard.index');
     })->name('dashboard');
+
+    Route::get('/superadmin/user', [\App\Http\Controllers\SuperadminController::class, 'user'])
+        ->name('superadmin.user.index')
+        ->middleware('auth');
 
     Route::get('/pegawai', [PegawaiController::class, 'index'])->name('pegawai');
     Route::post('/pegawai', [PegawaiController::class, 'store'])->name('pegawai.store');
