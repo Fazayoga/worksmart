@@ -100,68 +100,68 @@
         <!-- ================= TAB PERUSAHAAN ================= -->
         <div class="tab-pane fade show active" id="perusahaan">
             <div class="card shadow-sm border-0">
-                <div class="card-body table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-light">
+                {{-- <div class="card-body table-responsive"> --}}
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nama Perusahaan</th>
+                            <th>Total Pengguna</th>
+                            <th>Masa Aktif</th>
+                            <th>Status</th>
+                            <th>Tanggal Terdaftar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($perusahaanList as $p)
                             <tr>
-                                <th>Nama Perusahaan</th>
-                                <th>Total Pengguna</th>
-                                <th>Masa Aktif</th>
-                                <th>Status</th>
-                                <th>Tanggal Terdaftar</th>
+                                <td>{{ $p->nama_perusahaan }}</td>
+                                <td>{{ $p->users_count }}</td>
+                                <td>{{ ucfirst($p->subscription_status ?? 'Trial') }}</td>
+                                <td>
+                                    @if ($p->status == 'Aktif' || $p->status == 'active')
+                                        <span class="badge bg-success">Aktif</span>
+                                    @else
+                                        <span class="badge bg-danger">{{ $p->status ?? 'Tidak Aktif' }}</span>
+                                    @endif
+                                </td>
+                                <td>{{ $p->created_at->format('Y-m-d') }}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($perusahaanList as $p)
-                                <tr>
-                                    <td>{{ $p->nama_perusahaan }}</td>
-                                    <td>{{ $p->users_count }}</td>
-                                    <td>{{ ucfirst($p->subscription_status ?? 'Trial') }}</td>
-                                    <td>
-                                        @if ($p->status == 'Aktif' || $p->status == 'active')
-                                            <span class="badge bg-success">Aktif</span>
-                                        @else
-                                            <span class="badge bg-danger">{{ $p->status ?? 'Tidak Aktif' }}</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $p->created_at->format('Y-m-d') }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center">Belum ada data perusahaan</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center">Belum ada data perusahaan</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                {{-- </div> --}}
             </div>
         </div>
 
         <!-- ================= TAB ABSEN ================= -->
         <div class="tab-pane fade" id="absen">
             <div class="card shadow-sm border-0">
-                <div class="card-body table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-light">
+                {{-- <div class="card-body table-responsive"> --}}
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nama Perusahaan</th>
+                            <th>Total Absen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($absenList as $a)
                             <tr>
-                                <th>Nama Perusahaan</th>
-                                <th>Total Absen</th>
+                                <td>{{ $a->nama_perusahaan }}</td>
+                                <td>{{ $a->total_absen }}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($absenList as $a)
-                                <tr>
-                                    <td>{{ $a->nama_perusahaan }}</td>
-                                    <td>{{ $a->total_absen }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="2" class="text-center">Belum ada data absensi</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @empty
+                            <tr>
+                                <td colspan="2" class="text-center">Belum ada data absensi</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                {{-- </div> --}}
             </div>
         </div>
 
