@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}" />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/boxicons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/iconify-icons.css') }}" />
     <style>
         body {
             background-color: #ffffff;
@@ -69,7 +69,8 @@
             background: transparent;
             border: none;
             padding: 12px 0;
-            width: 100%;
+            flex: 1;
+            min-width: 0;
             font-size: 1rem;
             color: #333;
             outline: none !important;
@@ -131,16 +132,16 @@
         <form action="{{ route('login') }}" method="POST">
             @csrf
             <div class="input-group-modern">
-                <i class='bx bx-envelope'></i>
+                <i class='icon-base bx bx-envelope'></i>
                 <input type="email" name="email" placeholder="Email" required autofocus>
             </div>
             
             <div class="input-group-modern">
-                <i class='bx bx-lock-alt'></i>
+                <i class='icon-base bx bx-lock-alt'></i>
                 <input type="password" name="password" placeholder="Password" id="passwordInput" required>
-                <button type="button" class="btn border-0 p-0 ms-auto" onclick="togglePassword(event)">
-                    <i class='bx bx-hide' id="toggleIcon" style="font-size: 1.5rem; color: #a1acb8;"></i>
-                </button>
+                <span id="togglePasswordBtn" style="cursor: pointer; padding: 5px; display: flex; align-items: center;">
+                    <i class='icon-base bx bx-show text-black' id="toggleIcon" style="font-size: 1.4rem !important; color: #000000 !important; margin-right: 0 !important;"></i>
+                </span>
             </div>
 
             <div class="form-links">
@@ -156,18 +157,20 @@
     </div>
 
     <script>
-        function togglePassword(event) {
-            event.preventDefault();
+        document.getElementById('togglePasswordBtn').addEventListener('click', function(e) {
+            e.preventDefault();
             const input = document.getElementById('passwordInput');
             const icon = document.getElementById('toggleIcon');
             if (input.type === 'password') {
                 input.type = 'text';
-                icon.classList.replace('bx-hide', 'bx-show');
+                icon.classList.remove('bx-show');
+                icon.classList.add('bx-hide');
             } else {
                 input.type = 'password';
-                icon.classList.replace('bx-show', 'bx-hide');
+                icon.classList.remove('bx-hide');
+                icon.classList.add('bx-show');
             }
-        }
+        });
     </script>
 </body>
 </html>
