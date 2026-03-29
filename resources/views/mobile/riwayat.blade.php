@@ -33,7 +33,7 @@
         }
 
         .nav-tabs-riwayat .nav-link.active {
-            color: #ff8c00;
+            color: #696cff;
             background: none;
         }
 
@@ -44,7 +44,8 @@
             left: 0;
             width: 100%;
             height: 3px;
-            background-color: #ff8c00;
+            background-color: #696cff;
+            color: #696cff;
         }
 
         .riwayat-card {
