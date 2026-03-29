@@ -126,20 +126,26 @@
                     <div class="text-truncate">Dashboard</div>
                 </a>
             </li>
+            <li class="menu-item d-lg-none {{ request()->routeIs('selfie-absen') ? 'active' : '' }}">
+                <a href="{{ route('selfie-absen') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-camera"></i>
+                    <div class="text-truncate">Selfie Absen</div>
+                </a>
+            </li>
             <li class="menu-item {{ request()->routeIs('superadmin.user.*') ? 'active' : '' }}">
                 <a href="{{ route('superadmin.user.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user"></i>
                     <div class="text-truncate">User</div>
                 </a>
             </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
+            <li class="menu-item {{ request()->routeIs('rangking-poin') ? 'active' : '' }}">
+                <a href="{{ route('rangking-poin') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-trophy"></i>
                     <div class="text-truncate">Rangking Poin</div>
                 </a>
             </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
+            <li class="menu-item {{ request()->routeIs('superadmin.absen') ? 'active' : '' }}">
+                <a href="{{ route('superadmin.absen') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-check-square"></i>
                     <div class="text-truncate">Absen</div>
                 </a>
@@ -279,7 +285,20 @@
                     <div class="text-truncate" data-i18n="Dashboards">Dashboard</div>
                 </a>
             </li>
+            <li class="menu-item d-lg-none {{ request()->routeIs('selfie-absen') ? 'active' : '' }}">
+                <a href="{{ route('selfie-absen') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-camera"></i>
+                    <div class="text-truncate">Selfie Absen</div>
+                </a>
+            </li>
         @endif
+
+        <li class="menu-item {{ request()->routeIs('rangking-poin') ? 'active' : '' }}">
+            <a href="{{ route('rangking-poin') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-trophy"></i>
+                <div class="text-truncate">Rangking Poin</div>
+            </a>
+        </li>
 
         @if ($canAccess('pegawai'))
             <li class="menu-item {{ request()->routeIs('pegawai') ? 'active' : '' }}">

@@ -74,4 +74,33 @@ class SuperadminController extends Controller
 
         return view('superadmin.user.index', compact('users', 'search', 'totalIos', 'totalUsers'));
     }
+    public function absen(Request $request)
+    {
+        $dummyData = [
+            ['nama' => 'Yasser Ibrahim', 'perusahaan' => 'PT MASTER INTI GLOBAL', 'status' => 'Absen Masuk', 'avatar' => 'Y', 'timestamp' => '29 March 2026 19:27:01'],
+            ['nama' => 'Junardi', 'perusahaan' => 'PT. MULTI PRESTASI', 'status' => 'Absen Keluar', 'avatar' => 'J', 'timestamp' => '29 March 2026 20:26:42'],
+            ['nama' => 'Rizal', 'perusahaan' => 'ORANGE STEAK CULTURE', 'status' => 'Absen Keluar', 'avatar' => 'R', 'timestamp' => '29 March 2026 19:25:24'],
+            ['nama' => 'Bambang Suyitno', 'perusahaan' => 'CV MELATI AGRO PRIMA', 'status' => 'Absen Masuk', 'avatar' => 'B', 'timestamp' => '29 March 2026 19:25:15'],
+            ['nama' => 'Saripudin', 'perusahaan' => 'TOKO MULAN TEKNIK', 'status' => 'Absen Keluar', 'avatar' => 'S', 'timestamp' => '29 March 2026 19:25:14'],
+            ['nama' => 'Jihan Cantika Syaharani', 'perusahaan' => 'PT MASTER INTI GLOBAL', 'status' => 'Absen Masuk', 'avatar' => 'J', 'timestamp' => '29 March 2026 19:25:14'],
+            ['nama' => 'Audi Arili', 'perusahaan' => 'INDO PLASTIK', 'status' => 'Selesai Kunjungan', 'avatar' => 'A', 'timestamp' => '29 March 2026 20:24:17'],
+            ['nama' => 'Audhra Wahyu Adindha', 'perusahaan' => 'KOPKAR CIPTA SEJAHTERA', 'status' => 'Absen Keluar', 'avatar' => 'A', 'timestamp' => '29 March 2026 19:23:57'],
+            ['nama' => 'Inarwati Basri', 'perusahaan' => 'CV. BUMI HARAPAN', 'status' => 'Absen Keluar', 'avatar' => 'I', 'timestamp' => '29 March 2026 21:23:33'],
+        ];
+
+        // Simulate pagination
+        $perPage = 10;
+        $currentPage = $request->get('page', 1);
+        $totalItems = count($dummyData) * 100; // Mocking many results
+
+        $paginatedData = new \Illuminate\Pagination\LengthAwarePaginator(
+            $dummyData,
+            $totalItems,
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('superadmin.absen', compact('paginatedData'));
+    }
 }

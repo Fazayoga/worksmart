@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
             guests: '/login',
             users: '/dashboard'
         );
+        $middleware->alias([
+            'mobile_only' => \App\Http\Middleware\MobileOnly::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
