@@ -68,6 +68,8 @@ class BillingController extends Controller
             'nominal' => $nominal,
             'keterangan' => "Topup Saldo Rp " . number_format($nominal, 0, ',', '.') . ($bonus > 0 ? " + Bonus Rp " . number_format($bonus, 0, ',', '.') : ""),
             'nominal_total' => $nominal, // Usually price after discount, but for now same as nominal
+            'tanggal_mulai' => now(),
+            'tanggal_selesai' => now(),
             'status' => 'active',
             'payment_status' => 'unpaid',
             'metadata' => json_encode(['bonus' => $bonus])
@@ -79,11 +81,26 @@ class BillingController extends Controller
     public function buyPackage(Request $request)
     {
         $perusahaan = Auth::user()->perusahaan;
-        $packageStr = $request->input('package');
+        $packageValue = $request->input('package');
         
-        // Clean numeric value from string like "Paket 100 Pegawai - Rp 1.900.000"
-        $parts = explode(' - Rp ', $packageStr);
-        $nominal = count($parts) > 1 ? (int) preg_replace('/[^0-9]/', '', $parts[1]) : 0;
+        // If it's a numeric value (from the updated blade), use it directly
+        // Otherwise try to parse the old string format if any
+        if (is_numeric($packageValue)) {
+            $nominal = (int)$packageValue;
+            // Generate label based on nominal (fallback mapping)
+            $labels = [
+                1900000 => 'Paket Berlangganan 100 Pegawai',
+                3750000 => 'Paket Berlangganan 300 Pegawai',
+                5750000 => 'Paket Berlangganan 500 Pegawai',
+                7500000 => 'Paket Berlangganan 700 Pegawai',
+                9250000 => 'Paket Berlangganan 1000 Pegawai',
+            ];
+            $packageLabel = $labels[$nominal] ?? 'Paket Berlangganan Tahunan';
+        } else {
+            $parts = explode(' - Rp ', $packageValue);
+            $nominal = count($parts) > 1 ? (int) preg_replace('/[^0-9]/', '', $parts[1]) : 0;
+            $packageLabel = $parts[0] ?? 'Paket Berlangganan';
+        }
         
         if ($nominal <= 0) return back()->with('error', 'Pilih paket yang valid.');
 
@@ -92,32 +109,37 @@ class BillingController extends Controller
             'nomor_transaksi' => 'PKG-' . strtoupper(Str::random(10)),
             'tipe' => 'Pembelian Paket Tahunan',
             'nominal' => $nominal,
-            'keterangan' => "Pembelian " . $parts[0],
+            'keterangan' => $packageLabel . " (Per Tahun)",
             'nominal_total' => $nominal,
+            'tanggal_mulai' => now(),
+            'tanggal_selesai' => now()->addYear(),
             'status' => 'active',
             'payment_status' => 'unpaid',
         ]);
 
-        return back()->with('success', 'Pesanan paket berhasil dibuat. Silakan lakukan transfer sesuai petunjuk di atas.');
+        return back()->with('success', 'Pesanan paket tahunan berhasil dibuat. Silakan lakukan transfer sesuai petunjuk.');
     }
 
     public function buySaldoGaji(Request $request)
     {
         $perusahaan = Auth::user()->perusahaan;
         $valueStr = $request->input('saldo_gaji');
+        $customNominal = $request->input('custom_nominal');
         
-        if (str_contains($valueStr, 'Costume')) {
-            return back()->with('error', 'Fitur Custom Saldo Gaji akan segera hadir. Silakan pilih nominal yang tersedia.');
-        }
-
-        // Clean numeric value: capture first Rp value
-        if (preg_match('/Rp\.?([\d.]+)/i', $valueStr, $matches)) {
-            $nominal = (int) str_replace('.', '', $matches[1]);
+        if ($valueStr === 'costume') {
+            $nominal = (int) $customNominal;
         } else {
-            $nominal = (int) preg_replace('/[^0-9]/', '', $valueStr);
+            // Clean numeric value: capture first Rp value
+            if (preg_match('/Rp\.?([\d.]+)/i', $valueStr, $matches)) {
+                $nominal = (int) str_replace('.', '', $matches[1]);
+            } else {
+                $nominal = (int) preg_replace('/[^0-9]/', '', $valueStr);
+            }
         }
 
-        if ($nominal <= 0) return back()->with('error', 'Pilih nominal saldo gaji yang valid.');
+        if ($nominal < 100000) {
+            return back()->with('error', 'Nominal saldo gaji minimal Rp 100.000.');
+        }
 
         Billing::create([
             'perusahaan_id' => $perusahaan->id,
@@ -126,6 +148,8 @@ class BillingController extends Controller
             'nominal' => $nominal,
             'keterangan' => "Topup Saldo Gaji Rp " . number_format($nominal, 0, ',', '.'),
             'nominal_total' => $nominal,
+            'tanggal_mulai' => now(),
+            'tanggal_selesai' => now(),
             'status' => 'active',
             'payment_status' => 'unpaid',
         ]);
@@ -137,12 +161,11 @@ class BillingController extends Controller
     {
         $billing = Billing::findOrFail($id);
         if ($billing->payment_status == 'paid') return back()->with('error', 'Tagihan ini sudah terbayar.');
+        if ($billing->payment_status == 'pending') return back()->with('error', 'Tagihan ini sedang dalam proses verifikasi.');
 
         $request->validate([
-            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
-
-        $perusahaan = $billing->perusahaan;
 
         // Handle File Upload
         if ($request->hasFile('bukti_pembayaran')) {
@@ -152,28 +175,10 @@ class BillingController extends Controller
             $billing->bukti_pembayaran = 'bukti_pembayaran/' . $filename;
         }
 
-        // Update balances based on type
-        if ($billing->tipe == 'Topup Saldo Utama') {
-            $perusahaan->increment('saldo_utama', $billing->nominal);
-            $metadata = json_decode($billing->metadata, true);
-            if (isset($metadata['bonus'])) {
-                $perusahaan->increment('saldo_bonus', $metadata['bonus']);
-            }
-        } elseif ($billing->tipe == 'Topup Saldo Gaji') {
-            $perusahaan->increment('saldo_gaji', $billing->nominal);
-        } elseif ($billing->tipe == 'Pembelian Paket Tahunan') {
-            // Logic for extending subscription could go here
-            $perusahaan->update([
-                'subscription_status' => 'active',
-                'trial_ends_at' => Carbon::parse($perusahaan->trial_ends_at ?? now())->addYear()
-            ]);
-        }
-
-        $billing->payment_status = 'paid';
-        $billing->tanggal_bayar = now();
+        $billing->payment_status = 'pending';
         $billing->save();
 
-        return back()->with('success', 'Pembayaran berhasil dikonfirmasi. Saldo/Paket Anda telah diperbarui.');
+        return back()->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu verifikasi dari Superadmin.');
     }
 
     public function invoice($id)
@@ -194,10 +199,10 @@ class BillingController extends Controller
         // Only generate bill if trial is over OR subscription is active but needs renewal
         if ($perusahaan->trial_ends_at && now()->greaterThan($perusahaan->trial_ends_at)) {
             
-            // Check if there's already an UNPAID bill for the current period
+            // Check if there's already an UNPAID or PENDING bill for the current period
             $unpaidBill = Billing::where('perusahaan_id', $perusahaan->id)
                 ->where('tipe', 'Tagihan Bulanan')
-                ->where('payment_status', 'unpaid')
+                ->whereIn('payment_status', ['unpaid', 'pending'])
                 ->first();
 
             if (!$unpaidBill) {

@@ -69,6 +69,11 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'superadmin', 'as' => 'superadmin.'], function () {
         Route::get('/user', [SuperadminController::class, 'user'])->name('user.index');
         Route::get('/absen', [SuperadminController::class, 'absen'])->name('absen');
+        Route::get('/billing', [SuperadminController::class, 'billing'])->name('billing.index');
+        Route::post('/billing/{id}/approve', [SuperadminController::class, 'billingApprove'])->name('billing.approve');
+        Route::post('/billing/{id}/reject', [SuperadminController::class, 'billingReject'])->name('billing.reject');
+        Route::post('/voucher', [SuperadminController::class, 'voucherStore'])->name('voucher.store');
+        Route::delete('/voucher/{id}', [SuperadminController::class, 'voucherDelete'])->name('voucher.delete');
     });
 
     // Employee Management

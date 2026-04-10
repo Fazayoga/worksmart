@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Perusahaan;
 use App\Models\Billing;
+use App\Models\Voucher;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -102,5 +103,195 @@ class SuperadminController extends Controller
         );
 
         return view('superadmin.absen', compact('paginatedData'));
+    }
+
+    public function billing(Request $request)
+    {
+        $search = $request->input('search');
+        $perusahaan_id = $request->input('perusahaan_id');
+        $date = $request->input('date');
+
+        $query = Billing::with('perusahaan');
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nomor_transaksi', 'like', "%{$search}%")
+                  ->orWhere('keterangan', 'like', "%{$search}%");
+            });
+        }
+
+        if ($perusahaan_id) {
+            $query->where('perusahaan_id', $perusahaan_id);
+        }
+
+        if ($date) {
+            // Assuming date comes in as mm/dd/yyyy or Y-m-d, formatting accordingly
+            $parsedDate = date('Y-m-d', strtotime($date));
+            $query->whereDate('created_at', $parsedDate);
+        }
+
+        $billings = $query->orderByRaw("FIELD(payment_status, 'pending') DESC")
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        // Fetch Perusahaan for Select options
+        $perusahaanList = Perusahaan::orderBy('nama_perusahaan')->get();
+
+        // Calculate Metrics
+        $allPaid = Billing::where('payment_status', 'paid')->get();
+        $now = now();
+        $today = $now->copy()->startOfDay();
+        $sevenDaysAgo = $now->copy()->subDays(7)->startOfDay();
+        $startOfMonth = $now->copy()->startOfMonth();
+
+        $totalSaldo = 0;
+        $totalBonus = 0;
+        $saldoBulanIni = 0;
+        $bonusBulanIni = 0;
+        $saldoHariIni = 0;
+        $bonusHariIni = 0;
+        $saldo7Hari = 0;
+        $bonus7Hari = 0;
+
+        foreach ($allPaid as $bill) {
+            $nominal = $bill->nominal;
+            $bonus = 0;
+            if ($bill->metadata) {
+                $meta = json_decode($bill->metadata, true);
+                $bonus = $meta['bonus'] ?? 0;
+            }
+
+            if (in_array($bill->tipe, ['Topup Saldo Utama', 'Topup Saldo Gaji'])) {
+                $totalSaldo += $nominal;
+                $totalBonus += $bonus;
+
+                if ($bill->tanggal_bayar) {
+                    $d = $bill->tanggal_bayar;
+                    
+                    if ($d >= $startOfMonth) {
+                        $saldoBulanIni += $nominal;
+                        $bonusBulanIni += $bonus;
+                    }
+                    if ($d >= $today) {
+                        $saldoHariIni += $nominal;
+                        $bonusHariIni += $bonus;
+                    }
+                    if ($d >= $sevenDaysAgo) {
+                        $saldo7Hari += $nominal;
+                        $bonus7Hari += $bonus;
+                    }
+                }
+            }
+        }
+
+        // Chart Data (12 Months Revenue)
+        $chartLabels = [];
+        $chartData = [];
+        $indonesianMonths = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        for ($i = 11; $i >= 0; $i--) {
+            $monthDate = $now->copy()->subMonthsNoOverflow($i);
+            $chartLabels[] = $indonesianMonths[$monthDate->month] . ' ' . $monthDate->year;
+            
+            // All revenue for this month (all types of billing, since it's "Grafik Pendapatan")
+            $monthSum = $allPaid->filter(function($b) use ($monthDate) {
+                return $b->tanggal_bayar && $b->tanggal_bayar->format('Y-m') === $monthDate->format('Y-m');
+            })->sum('nominal_total');
+
+            $chartData[] = $monthSum;
+        }
+
+        // Vouchers
+        $vouchers = Voucher::orderBy('created_at', 'desc')->get();
+
+        return view('superadmin.billing.index', compact(
+            'billings', 'search', 'perusahaanList',
+            'totalSaldo', 'totalBonus', 'saldoBulanIni', 'bonusBulanIni',
+            'saldoHariIni', 'bonusHariIni', 'saldo7Hari', 'bonus7Hari',
+            'chartLabels', 'chartData', 'vouchers'
+        ));
+    }
+
+    public function voucherStore(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string',
+            'kode' => 'required|string|unique:vouchers,kode',
+            'kuota' => 'required|integer',
+            'tipe' => 'required|string',
+            'status' => 'required|string',
+            'nominal' => 'required|numeric'
+        ]);
+
+        Voucher::create($request->all());
+
+        return back()->with('success', 'Voucher berhasil disimpan.');
+    }
+
+    public function voucherDelete($id)
+    {
+        Voucher::findOrFail($id)->delete();
+        return back()->with('success', 'Voucher berhasil dihapus.');
+    }
+
+    public function billingApprove(Request $request, $id)
+    {
+        $billing = Billing::findOrFail($id);
+        
+        if ($billing->payment_status === 'paid') {
+            return back()->with('error', 'Tagihan ini sudah disetujui sebelumnya.');
+        }
+
+        if ($billing->payment_status !== 'pending') {
+            return back()->with('error', 'Tagihan ini belum diupload bukti pembayarannya.');
+        }
+
+        $perusahaan = $billing->perusahaan;
+
+        // Update balances based on type
+        if ($billing->tipe == 'Topup Saldo Utama') {
+            $perusahaan->increment('saldo_utama', $billing->nominal);
+            $metadata = json_decode($billing->metadata, true);
+            if (isset($metadata['bonus'])) {
+                $perusahaan->increment('saldo_bonus', $metadata['bonus']);
+            }
+        } elseif ($billing->tipe == 'Topup Saldo Gaji') {
+            $perusahaan->increment('saldo_gaji', $billing->nominal);
+        } elseif ($billing->tipe == 'Pembelian Paket Tahunan') {
+            $perusahaan->update([
+                'subscription_status' => 'active',
+                'trial_ends_at' => Carbon::parse($perusahaan->trial_ends_at ?? now())->addYear()
+            ]);
+        } elseif ($billing->tipe == 'Tagihan Bulanan') {
+            $perusahaan->update([
+                'subscription_status' => 'active',
+                'trial_ends_at' => $billing->tanggal_selesai ?? Carbon::now()->addMonth()
+            ]);
+        }
+
+        $billing->payment_status = 'paid';
+        $billing->tanggal_bayar = now();
+        $billing->save();
+
+        return back()->with('success', 'Pembayaran berhasil dikonfirmasi dan saldo/paket perusahaan telah diperbarui.');
+    }
+
+    public function billingReject(Request $request, $id)
+    {
+        $billing = Billing::findOrFail($id);
+        
+        if ($billing->payment_status === 'paid') {
+            return back()->with('error', 'Tagihan ini sudah disetujui, tidak bisa ditolak.');
+        }
+
+        $billing->payment_status = 'unpaid';
+        $billing->bukti_pembayaran = null; // Clear proof
+        $billing->save();
+
+        return back()->with('success', 'Pembayaran telah ditolak dan status dikembalikan ke Belum Bayar.');
     }
 }

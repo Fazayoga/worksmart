@@ -174,8 +174,8 @@
                     <div class="text-truncate">Perusahaan Plugin</div>
                 </a>
             </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
+            <li class="menu-item {{ request()->routeIs('superadmin.billing.*') ? 'active' : '' }}">
+                <a href="{{ route('superadmin.billing.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-dollar-circle"></i>
                     <div class="text-truncate">Billing</div>
                 </a>
@@ -293,12 +293,12 @@
             </li>
         @endif
 
-        <li class="menu-item {{ request()->routeIs('rangking-poin') ? 'active' : '' }}">
+        {{-- <li class="menu-item {{ request()->routeIs('rangking-poin') ? 'active' : '' }}">
             <a href="{{ route('rangking-poin') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-trophy"></i>
                 <div class="text-truncate">Rangking Poin</div>
             </a>
-        </li>
+        </li> --}}
 
         @if ($canAccess('pegawai'))
             <li class="menu-item {{ request()->routeIs('pegawai') ? 'active' : '' }}">
